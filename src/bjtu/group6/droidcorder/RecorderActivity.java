@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.SystemClock;
 import android.app.Activity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
@@ -90,8 +91,8 @@ public class RecorderActivity extends Activity {
 	}
 
 	public void onRecordClick(View view) {
-		_currentFile = getStorageDir(_path);
 		if (!_recordMode) {
+			_currentFile = getStorageDir(_path);
 			_buttonRecord.setText(R.string.recording);
 			startRecording(_currentFile);
 			_chronometer.setBase(SystemClock.elapsedRealtime());
@@ -117,7 +118,7 @@ public class RecorderActivity extends Activity {
 				_player.start();
 				_buttonPlay.setText(R.string.stop);
 			} catch (IOException e) {
-				// Log.e(LOG_TAG, "prepare() failed");
+				Log.e("youpi", "prepare() failed");
 			}
 		} else {
 			_player.release();
