@@ -41,4 +41,14 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         />
 
+    <Button
+        android:id="@+id/btnAudioList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/SpinnerFormat"
+        android:layout_alignRight="@+id/SpinnerFormat"
+        android:layout_marginBottom="32dp"
+        android:layout_marginRight="14dp"
+        android:text="AudioList" />
+
 </RelativeLayout>

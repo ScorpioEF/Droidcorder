@@ -1,4 +1,4 @@
-package bjtu.group6.droidcorder;
+package bjtu.group6.droidcorder.service;
 
 import java.io.File;
 import java.io.IOException;

@@ -11,15 +11,18 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.SystemClock;
 import android.app.Activity;
+import android.content.Intent;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.Chronometer;
 
 public class RecorderActivity extends Activity {
 	Button _buttonRecord;
 	Button _buttonPlay;
+	Button buttonAudioList;
 
 	Chronometer _chronometer;
 
@@ -37,7 +40,24 @@ public class RecorderActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_recorder);
+		findViews();
+		setListeners();
 		// _recorderTask = new RecorderTask();
+	}
+
+	private void setListeners() {
+		buttonAudioList.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent();
+    			intent.setClass(RecorderActivity.this, AudioListActivity.class);
+    			startActivity(intent);
+    			RecorderActivity.this.finish();
+			}
+			
+		});
+		
 	}
 
 	@Override
@@ -149,4 +169,9 @@ public class RecorderActivity extends Activity {
 		_recorder.release();
 		_recorder = null;
 	}
+	
+	private void findViews(){
+		buttonAudioList = (Button)this.findViewById(R.id.btnAudioList);
+    }
 }
+
