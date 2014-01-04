@@ -2,33 +2,46 @@ package bjtu.group6.droidcorder;
 
 import java.util.ArrayList;
 
-import android.os.Bundle;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnCreateContextMenuListener;
 import android.widget.AdapterView;
-import android.widget.ListView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
-
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.Toast;
 import bjtu.group6.droidcorder.model.AudioFileInfo;
 import bjtu.group6.droidcorder.service.AudioListAdapter;
+import bjtu.group6.droidcorder.service.FileOperation;
 
 public class AudioListActivity extends Activity {
 	private ArrayList<AudioFileInfo> audioFiles = new ArrayList<AudioFileInfo>();
 	private ListView audioList;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_audio_list);
 		findViews();
-		
-		//For test
+
+		// For test
 		AudioFileInfo audioinfo = new AudioFileInfo();
 		audioinfo.setAudioId(111111);
-		audioinfo.setFileName("Audio1");
+		audioinfo.setFileName("test1");
 		audioinfo.setDuration("10.50");
 		audioinfo.setCreateTime("2014.1.1");
+		audioinfo.setFilePath("/sdcard/test1.mp3");
+		
 		AudioFileInfo audioinfo2 = new AudioFileInfo();
 		audioinfo2.setAudioId(111222);
 		audioinfo2.setFileName("Audio2");
@@ -36,23 +49,30 @@ public class AudioListActivity extends Activity {
 		audioinfo2.setCreateTime("2014.1.2");
 		audioFiles.add(audioinfo);
 		audioFiles.add(audioinfo2);
-		
-		audioList.setAdapter(new AudioListAdapter(audioFiles, AudioListActivity.this));
-		
+
+		audioList.setAdapter(new AudioListAdapter(audioFiles,
+				AudioListActivity.this));
+
 		setListeners();
+		
+		audioList
+				.setOnCreateContextMenuListener(listviewOnCreateContextMenuListener);
 	}
 
 	private void setListeners() {
-		audioList.setOnItemClickListener(new OnItemClickListener(){ 
-			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) { 
-	            AudioFileInfo audioInfo = (AudioFileInfo) audioList.getItemAtPosition(arg2); 
-	            System.out.println(audioInfo.getFileName());
-//	        	Intent intent = new Intent();
-//    			intent.setClass(AudioListActivity.this, AudioInfoInfor.class);
-//    			
-//    			startActivity(intent);
-	        } 
-	         
+		audioList.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+					long arg3) {
+				AudioFileInfo audioInfo = (AudioFileInfo) audioList
+						.getItemAtPosition(arg2);
+				System.out.println(audioInfo.getFileName());
+				// Intent intent = new Intent();
+				// intent.setClass(AudioListActivity.this,
+				// AudioInfoInfor.class);
+				//
+				// startActivity(intent);
+			}
+
 		});
 	}
 
@@ -63,7 +83,142 @@ public class AudioListActivity extends Activity {
 		return true;
 	}
 
-	private void findViews(){
-		audioList=(ListView)this.findViewById(R.id.audioList);
-    }
+	private void findViews() {
+		audioList = (ListView) this.findViewById(R.id.audioList);
+	}
+	
+	//the listview menu listener, is combined with the onContextItemSelected function
+	OnCreateContextMenuListener listviewOnCreateContextMenuListener = new OnCreateContextMenuListener()
+	 {
+
+	  @Override
+	  public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo)
+	  {
+		  menu.setHeaderTitle("Operations:");//БъЬт
+		  menu.add(0, 0, 0, "Details");
+		  menu.add(0, 1, 0, "Rename");
+		  menu.add(0, 2, 0, "Share");
+		  menu.add(0, 3, 0, "Delete");
+	  }
+	 };
+
+
+	 /**
+	  * Long time click item response function and get the detail info of the chosen item
+	  */
+	 @Override
+	 public boolean onContextItemSelected(MenuItem item)
+	 {
+
+	  ContextMenuInfo info = item.getMenuInfo();
+	  AdapterView.AdapterContextMenuInfo contextMenuInfo = (AdapterContextMenuInfo) info;
+	  // get the item position
+	  int position = contextMenuInfo.position;
+	  final AudioFileInfo audioFileInfo = audioFiles.get(position);
+	  Log.i("AudioListActivity", "Get the audioFile info:" + audioFileInfo.getFileName());
+	  
+	  switch (item.getItemId()) {
+		case 0:
+			// Details
+			showDetails(audioFileInfo);
+			break;
+		case 1:
+			// Rename
+			rename(audioFileInfo);		
+			break;
+		case 2:
+			// Share
+			break;
+		case 3:
+			//Delete
+			delete(audioFileInfo);
+			break;
+			
+		default:
+			break;
+		}
+	  return super.onContextItemSelected(item);
+	 }
+	 
+	 /**
+	  * Show detail info
+	  * @author FengXiangmin
+	  * @param audioFileInfo
+	  */
+	 private void showDetails(AudioFileInfo audioFileInfo){
+		 AlertDialog.Builder builder = new AlertDialog.Builder(this);  
+			String message = "Filename:" + audioFileInfo.getFileName() + "\n"
+					 + "FilePath:" + audioFileInfo.getFilePath() + "\n"
+					 + "CreateTime:" + audioFileInfo.getCreateTime() + "\n"
+					 + "FileSize:" + audioFileInfo.getFileSize() + "\n"
+					 + "Duration:" + audioFileInfo.getDuration();
+			
+         builder.setTitle("Details info");  
+         builder.setMessage(message);  
+         builder.setPositiveButton("OK", new android.content.DialogInterface.OnClickListener() {  
+             public void onClick(DialogInterface dialog, int which)  
+             {  
+                 dialog.dismiss();  
+             }  
+         });  
+         builder.show(); 
+	 }
+	 
+	 /**
+	  * rename
+	  * @author FengXiangmin
+	  * @param audioFileInfo
+	  */
+	 private void rename(final AudioFileInfo audioFileInfo){
+		 final EditText editText = new EditText(this);
+		 final FileOperation fileOperation = new FileOperation();
+		 final String oldFileName = audioFileInfo.getFileName();
+		 new AlertDialog.Builder(this)
+			.setTitle("Input new name")
+			.setIcon(android.R.drawable.ic_dialog_info)
+			.setView(editText)
+			.setPositiveButton("Yes", new OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					// rename the filename
+					String newFilename = editText.getText().toString();
+					boolean renameFlag = fileOperation.updateFile(audioFileInfo.getFilePath(), newFilename);
+					if(renameFlag){
+						Log.i("AudioListActivity", "rename file " + oldFileName + " to name " + newFilename + " success!");
+						Toast.makeText(AudioListActivity.this, "Rename file " + oldFileName + " success!", Toast.LENGTH_SHORT).show();
+					}else{
+						Log.e("AudioListActivity", "rename file " + oldFileName + " to name " + newFilename + " failed!");
+						Toast.makeText(AudioListActivity.this, "Rename file " + oldFileName + " failed!", Toast.LENGTH_SHORT).show();
+					}
+				}
+			})
+			.setNegativeButton("Cancle", new OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					// Cancle to rename
+					Log.i("AudioListActivity", "rename file " +oldFileName + " cancled!");
+				}
+			})
+			.show();
+	 }
+	 
+	 /**
+	  * delete
+	  * @author FengXiangmin
+	  * @param audioFileInfo
+	  */
+	 private void delete(AudioFileInfo audioFileInfo)
+	 {
+		 final FileOperation fileOperation = new FileOperation();
+		 final String oldFileName = audioFileInfo.getFileName();
+		 boolean deleteFlag = fileOperation.deleteFile(audioFileInfo.getFilePath());
+			if(deleteFlag){
+				Log.i("AudioListActivity", "delete file " + audioFileInfo.getFilePath() + " success!");
+				Toast.makeText(AudioListActivity.this, "Delete file " + oldFileName + " success!", Toast.LENGTH_SHORT).show();
+			}else{
+				Log.e("AudioListActivity", "delete file " + audioFileInfo.getFilePath() + " failed!");
+				Toast.makeText(AudioListActivity.this, "Delete file " + oldFileName + " failed!", Toast.LENGTH_SHORT).show();
+			}
+	 }
 }
