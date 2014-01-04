@@ -10,7 +10,7 @@
         android:background="#a9a9a9" >
 
         <Button
-            android:id="@+id/button1"
+            android:id="@+id/detailBtnReturn"
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -27,7 +27,7 @@
             android:textSize="25sp" />
 
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/btnSure"
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
