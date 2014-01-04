@@ -1,54 +1,86 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".RecorderActivity" >
+    android:orientation="vertical" >
 
-    <Button
-        android:id="@+id/ButtonRecordStop"
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:background="#a9a9a9"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/record_title"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="@string/soundRecorder"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:onClick="onRecordClick"
-        android:text="@string/record" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="vertical" >
 
-    <Spinner
-        android:id="@+id/SpinnerFormat"
+        <Chronometer
+            android:id="@+id/Chronometer"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:layout_marginTop="20dp" >
+
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/tape_bottom" />
+
+    </FrameLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_marginTop="40dp"
+        android:background="@drawable/background_key"
+        android:orientation="horizontal" >
 
-    <Button
-        android:id="@+id/ButtonPlayStop"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/SpinnerFormat"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="44dp"
-        android:onClick="onPlayClick"
-        android:text="@string/play" />
+        <Button
+            android:id="@+id/record_btnSetting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:text="setting" />
 
-    <Chronometer
-        android:id="@+id/Chronometer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/ButtonRecordStop"
-        android:layout_centerHorizontal="true"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        />
+        <Button
+            android:id="@+id/ButtonRecordStop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:background="@drawable/btn_record_normal"
+            android:onClick="onRecordClick" />
 
-    <Button
-        android:id="@+id/btnAudioList"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/SpinnerFormat"
-        android:layout_alignRight="@+id/SpinnerFormat"
-        android:layout_marginBottom="32dp"
-        android:layout_marginRight="14dp"
-        android:text="AudioList" />
+        <Button
+            android:id="@+id/btnAudioList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:text="AudioList" />
+    </LinearLayout>
 
-</RelativeLayout>
+</LinearLayout>

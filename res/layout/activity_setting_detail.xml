@@ -6,14 +6,15 @@
 
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:background="#a9a9a9" >
 
         <Button
             android:id="@+id/detailBtnReturn"
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0.06"
             android:background="@drawable/title_back_normal" />
 
         <TextView
@@ -24,13 +25,15 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/dfFormat"
-            android:textSize="25sp" />
+            android:textSize="30sp"
+            android:textStyle="bold" />
 
         <Button
             android:id="@+id/btnSure"
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0.08"
             android:background="@drawable/toolbar_fav_icon_res" />
 
     </LinearLayout>

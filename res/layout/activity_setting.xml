@@ -5,17 +5,17 @@
     android:orientation="vertical" >
 
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:background="#a9a9a9" >
+        android:layout_height="50dp"
+        android:background="#a9a9a9"
+        android:orientation="horizontal" >
 
         <Button
             android:id="@+id/btnReturn"
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0"
+            android:layout_height="match_parent"
+            android:layout_weight="0.28"
             android:background="@drawable/title_back_normal" />
 
         <TextView
@@ -26,7 +26,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/setting"
-            android:textSize="25sp"
+            android:textSize="30sp"
             android:textStyle="bold" />
 
         <TextView
@@ -42,7 +42,7 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="15dp"
         android:orientation="horizontal" >
 
         <TextView
@@ -66,7 +66,7 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp" >
+        android:layout_marginTop="15dp" >
 
         <TextView
             android:id="@+id/textDefaultPath"
@@ -89,7 +89,7 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp" >
+        android:layout_marginTop="15dp" >
 
         <TextView
             android:id="@+id/textMaxDuration"
@@ -111,7 +111,7 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp" >
+        android:layout_marginTop="15dp" >
 
         <TextView
             android:id="@+id/textView1"
