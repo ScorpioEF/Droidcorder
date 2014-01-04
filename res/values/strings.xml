@@ -8,5 +8,11 @@
     <string name="recording">Recording</string>
     <string name="play">Play</string>
     <string name="stop">Stop</string>
-
+	<string name="setting">Setting</string>
+	<string name="dfFormat">Default Format</string>
+	<string name="dfPath">Default Path</string>
+	<string name="maxDuration">Maximum Duration</string>
+	<string name="aboutUs">About Us</string>
+	<string name="blankString">   </string>
+	<string name="sounds">Sounds</string>
 </resources>
