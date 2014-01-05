@@ -2,17 +2,12 @@ package bjtu.group6.droidcorder.service;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Timestamp;
 import java.text.DecimalFormat;
-import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-import bjtu.group6.droidcorder.model.AudioFileInfo;
-
-import android.R.integer;
 import android.content.ContentValues;
 import android.content.Context;
 import android.media.MediaPlayer;
@@ -21,6 +16,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import bjtu.group6.droidcorder.model.AudioFileInfo;
 
 /**
  * The basic operation of the file
@@ -35,15 +31,15 @@ public class FileOperation {
 	public ArrayList<AudioFileInfo> getAudioFileList() {
 		File dir = Environment.getExternalStoragePublicDirectory(path);
 		if (dir.isDirectory()) {
-			Log.e("FIle dir path:",dir.getPath());
-			Log.e("FIle dir absolute path:",dir.getAbsolutePath());
+			Log.i("FileOperation", "FIle dir path:" + dir.getPath());
+			Log.i("FileOperation", "FIle dir absolute path:" + dir.getAbsolutePath());
 
 			String[] filelist = dir.list();
 			for (int i = 0; i < filelist.length; i++) {
 				File readfile = new File(dir + "/" + filelist[i]);
 				if (!readfile.isDirectory()) {
 					AudioFileInfo audioFileInfo = new AudioFileInfo();
-					audioFileInfo.setFileName(readfile.getName());
+					audioFileInfo.setFileName(readfile.getName().split("\\.")[0]);
 					audioFileInfo.setFilePath(readfile.getPath());
 					audioFileInfo.setFileSize(formatFileSize(readfile.length()));
 					Long time =readfile.lastModified();
@@ -63,9 +59,9 @@ public class FileOperation {
 					DecimalFormat df = new DecimalFormat("00");
 					audioPlayer = null;
 					audioFileInfo.setDuration(String.valueOf(df.format(minute)) + ":" + String.valueOf(df.format(second)));
-					Log.e("audio file path=",readfile.getPath());
-					Log.e("absolutepath=", readfile.getAbsolutePath());
-					Log.e("name=", readfile.getName());
+					Log.i("FileOperation", "audio file path=" + readfile.getPath());
+					Log.i("FileOperation", "absolutepath=" + readfile.getAbsolutePath());
+					Log.i("FileOperation", "name=" + readfile.getName());
 					audioFiles.add(audioFileInfo);
 				}
 			}

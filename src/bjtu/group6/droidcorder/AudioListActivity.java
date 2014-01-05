@@ -21,6 +21,7 @@ import android.view.View.OnCreateContextMenuListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -42,22 +43,7 @@ public class AudioListActivity extends Activity {
 		findViews();
 
 		audioFiles = fileOperation.getAudioFileList();
-		// For test
-//		AudioFileInfo audioinfo = new AudioFileInfo();
-//		audioinfo.setAudioId(111111);
-//		audioinfo.setFileName("test1");
-//		audioinfo.setDuration("10.50");
-//		audioinfo.setCreateTime("2014.1.1");
-//		audioinfo.setFilePath("/mnt/sdcard/test1.mp3");
-//
-//		AudioFileInfo audioinfo2 = new AudioFileInfo();
-//		audioinfo2.setAudioId(111222);
-//		audioinfo2.setFileName("Audio2");
-//		audioinfo2.setDuration("21.50");
-//		audioinfo2.setCreateTime("2014.1.2");
-//		audioFiles.add(audioinfo);
-//		audioFiles.add(audioinfo2);
-
+		
 		audioList.setAdapter(new AudioListAdapter(audioFiles,
 				AudioListActivity.this));
 
@@ -122,22 +108,6 @@ public class AudioListActivity extends Activity {
 	private void findViews() {
 		audioList = (ListView) this.findViewById(R.id.audioList);
 	}
-
-	//the listview menu listener, is combined with the onContextItemSelected function
-	OnCreateContextMenuListener listviewOnCreateContextMenuListener = new OnCreateContextMenuListener()
-	{
-
-		@Override
-		public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo)
-		{
-			menu.setHeaderTitle("Operations:");//БъЬт
-			menu.add(0, 0, 0, "Details");
-			menu.add(0, 1, 0, "Rename");
-			menu.add(0, 2, 0, "Share");
-			menu.add(0, 3, 0, "Delete");
-			menu.add(0, 4, 0, "Set as ringtone");
-		}
-	};
 
 
 	/**
@@ -213,6 +183,7 @@ public class AudioListActivity extends Activity {
 	 */
 	private void rename(final AudioFileInfo audioFileInfo){
 		final EditText editText = new EditText(this);
+		editText.setText(audioFileInfo.getFileName());
 		final String oldFileName = audioFileInfo.getFileName();
 		new AlertDialog.Builder(this)
 		.setTitle("Input new name")
@@ -231,17 +202,26 @@ public class AudioListActivity extends Activity {
 					Log.e("AudioListActivity", "rename file " + oldFileName + " to name " + newFilename + " failed!");
 					Toast.makeText(AudioListActivity.this, "Rename file " + oldFileName + " failed!", Toast.LENGTH_SHORT).show();
 				}
+				//refresh the listview
+				audioFiles.clear();
+				audioFiles = fileOperation.getAudioFileList();
+				
+				audioList.setAdapter(new AudioListAdapter(audioFiles,
+						AudioListActivity.this));
+				BaseAdapter sAdapter = (BaseAdapter)audioList.getAdapter();
+		        sAdapter.notifyDataSetChanged();
 			}
 		})
-		.setNegativeButton("Cancle", new OnClickListener() {
+		.setNegativeButton("Cancel", new OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				// Cancle to rename
-				Log.i("AudioListActivity", "rename file " +oldFileName + " cancled!");
+				// Cancel to rename
+				Log.i("AudioListActivity", "rename file " +oldFileName + " Canceled!");
 			}
 		})
 		.show();
+		
 	}
 
 	/**
@@ -260,6 +240,15 @@ public class AudioListActivity extends Activity {
 			Log.e("AudioListActivity", "delete file " + audioFileInfo.getFilePath() + " failed!");
 			Toast.makeText(AudioListActivity.this, "Delete file " + oldFileName + " failed!", Toast.LENGTH_SHORT).show();
 		}
+		
+		//refresh the listview
+		audioFiles.clear();
+		audioFiles = fileOperation.getAudioFileList();
+		
+		audioList.setAdapter(new AudioListAdapter(audioFiles,
+				AudioListActivity.this));
+		BaseAdapter sAdapter = (BaseAdapter)audioList.getAdapter();
+        sAdapter.notifyDataSetChanged();
 	}
 
 	/**
