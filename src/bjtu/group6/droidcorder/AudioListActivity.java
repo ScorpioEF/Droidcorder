@@ -7,7 +7,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -19,7 +21,6 @@ import android.view.View.OnCreateContextMenuListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -170,6 +171,7 @@ public class AudioListActivity extends Activity {
 			break;
 		case 2:
 			// Share
+			share(audioFileInfo);
 			break;
 		case 3:
 			//Delete
@@ -281,28 +283,36 @@ public class AudioListActivity extends Activity {
 			public void onClick(DialogInterface dialog, int which) {
 				String message;
 				switch (which) {  
-				case 0:  
-					fileOperation.setAsCallRingtone(AudioListActivity.this, audioFileInfo);
-					message = "Set file " + audioFileInfo.getFileName() + " as Phone Ringtone success!";
-					Log.i("AudioListActivity", message);
-					Toast.makeText(AudioListActivity.this, message, Toast.LENGTH_SHORT).show();  
-					break;  
-				case 1:  
-					fileOperation.setAsAlarmRingtone(AudioListActivity.this, audioFileInfo);
-					message = "Set file " + audioFileInfo.getFileName() + " as Alarm Ringtone success!";
-					Log.i("AudioListActivity", message);
-					Toast.makeText(AudioListActivity.this, message, Toast.LENGTH_SHORT).show(); 
-					break;  
-				case 2:  
-					fileOperation.setAsNotificationRingtone(AudioListActivity.this, audioFileInfo);
-					message = "Set file " + audioFileInfo.getFileName() + " as Notification Ringtone success!";
-					Log.i("AudioListActivity", message);
-					Toast.makeText(AudioListActivity.this, message, Toast.LENGTH_SHORT).show();  
-					break;    
-
-				}
-			}}).create();  
-		dialog.show();  
-
-	}	 
+		         case 0:  
+		        	fileOperation.setAsCallRingtone(AudioListActivity.this, audioFileInfo);
+		        	message = "Set file " + audioFileInfo.getFileName() + " as Phone Ringtone success!";
+		     		Log.i("AudioListActivity", message);
+		     		Toast.makeText(AudioListActivity.this, message, Toast.LENGTH_SHORT).show();  
+		            break;  
+		         case 1:  
+		        	 fileOperation.setAsAlarmRingtone(AudioListActivity.this, audioFileInfo);
+		        	 message = "Set file " + audioFileInfo.getFileName() + " as Alarm Ringtone success!";
+			     	 Log.i("AudioListActivity", message);
+			     	 Toast.makeText(AudioListActivity.this, message, Toast.LENGTH_SHORT).show(); 
+			         break;  
+		         case 2:  
+		        	 fileOperation.setAsNotificationRingtone(AudioListActivity.this, audioFileInfo);
+		        	 message = "Set file " + audioFileInfo.getFileName() + " as Notification Ringtone success!";
+			     	 Log.i("AudioListActivity", message);
+			     	 Toast.makeText(AudioListActivity.this, message, Toast.LENGTH_SHORT).show();  
+			         break;    
+				
+			}
+		}}).create();  
+		 dialog.show();  
+		
+	 }	 
+	 
+	 private void share(final AudioFileInfo audioFileInfo)
+	 {
+			Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+			sharingIntent.setType("audio/*");
+			sharingIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(audioFileInfo.getFilePath()));
+			startActivity(Intent.createChooser(sharingIntent, "Share Sound File"));
+	 }
 }

@@ -4,24 +4,20 @@ import java.io.File;
 import java.sql.Timestamp;
 import java.util.Date;
 
-import bjtu.group6.droidcorder.R;
-import bjtu.group6.droidcorder.service.RecorderTask;
-
+import android.app.Activity;
+import android.content.Intent;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.SystemClock;
-import android.app.Activity;
-import android.content.Intent;
 import android.view.Menu;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.Chronometer;
+import bjtu.group6.droidcorder.service.RecorderTask;
 
 public class RecorderActivity extends Activity {
 	Button _buttonRecord;
-	Button buttonAudioList;
 
 	Chronometer _chronometer;
 
@@ -37,8 +33,6 @@ public class RecorderActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_recorder);
-		buttonAudioList = (Button)this.findViewById(R.id.btnAudioList);
-		setListeners();
 
 		//	    final AlertDialog.Builder alert = new AlertDialog.Builder(this);
 		//	    alert.setTitle(R.string.filename);
@@ -55,22 +49,6 @@ public class RecorderActivity extends Activity {
 		//	        }
 		//	    });
 		//	    alert.show();
-	}
-
-
-	private void setListeners() {
-		buttonAudioList.setOnClickListener(new OnClickListener(){
-
-			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent();
-				intent.setClass(RecorderActivity.this, AudioListActivity.class);
-				startActivity(intent);
-				RecorderActivity.this.finish();
-			}
-
-		});
-
 	}
 
 	@Override
@@ -136,4 +114,10 @@ public class RecorderActivity extends Activity {
 		_recordMode = !_recordMode;
 	}
 
+	public void onListMediaClick(View view)
+	{
+		Intent i = new Intent(this, AudioListActivity.class);
+		startActivity(i);
+	}
+	
 }
