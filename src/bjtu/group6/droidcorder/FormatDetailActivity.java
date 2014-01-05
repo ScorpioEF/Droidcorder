@@ -15,11 +15,15 @@ public class FormatDetailActivity extends ListActivity {
 	private int defaultIndex = 0;
 	private int selectedFormatIndex;
 	
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		updateSetting();
-		setContentView(R.layout.activity_setting_detail);		
+		setContentView(R.layout.activity_setting_detail);	
+		ListView listView = this.getListView();
+		listView.setItemsCanFocus(false);
+		listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 	}
 	
 	@Override

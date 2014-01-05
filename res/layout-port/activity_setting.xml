@@ -47,14 +47,14 @@
         android:orientation="horizontal" >
 
         <TextView
-            android:id="@+id/textDefaultFormat"
+            android:id="@+id/txt_default_format"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="20"
-            android:text="@string/dfFormat"
-            android:textSize="20sp"
             android:clickable="true"
-            android:onClick="onFormatSettingClick"/>
+            android:onClick="onFormatSettingClick"
+            android:text="@string/dfFormat"
+            android:textSize="20sp" />
 
         <Button
             android:id="@+id/btn_defaut_format"
@@ -73,20 +73,23 @@
         android:layout_marginTop="15dp" >
 
         <TextView
-            android:id="@+id/textDefaultPath"
+            android:id="@+id/txt_default_path"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="20"
             android:text="@string/dfPath"
-            android:textSize="20sp" />
+            android:textSize="20sp" 
+			android:clickable="true"
+            android:onClick="onDefaultPathClick"/>
 
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/btn_default_path"
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0"
-            android:background="@drawable/right_arrow_nor" />
+            android:background="@drawable/right_arrow_nor" 
+			android:onClick="onDefaultPathClick" />
 
     </LinearLayout>
 
@@ -96,19 +99,22 @@
         android:layout_marginTop="15dp" >
 
         <TextView
-            android:id="@+id/textMaxDuration"
+            android:id="@+id/txt_max_dura"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="20"
             android:text="@string/maxDuration"
-            android:textSize="20sp" />
+            android:textSize="20sp" 
+            android:clickable="true"
+            android:onClick="onMaxDurationClick"/>
 
         <Button
-            android:id="@+id/button3"
+            android:id="@+id/btn_max_dura"
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/right_arrow_nor" />
+            android:background="@drawable/right_arrow_nor"
+            android:onClick="onMaxDurationClick"/>
 
     </LinearLayout>
 
@@ -118,19 +124,22 @@
         android:layout_marginTop="15dp" >
 
         <TextView
-            android:id="@+id/textView1"
+            android:id="@+id/txt_about"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="20"
             android:text="@string/aboutUs"
-            android:textSize="20sp" />
+            android:textSize="20sp" 
+            android:clickable="true"
+            android:onClick="onAboutUsClick"/>
 
         <Button
-            android:id="@+id/button4"
+            android:id="@+id/tn_about"
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/right_arrow_nor" />
+            android:background="@drawable/right_arrow_nor" 
+            android:onClick="onAboutUsClick"/>
 
     </LinearLayout>
 
