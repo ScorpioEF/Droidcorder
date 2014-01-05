@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
+import bjtu.group6.droidcorder.R.drawable;
 import bjtu.group6.droidcorder.service.FileOperation;
 import bjtu.group6.droidcorder.service.RecorderTask;
 
@@ -84,12 +85,12 @@ public class RecorderActivity extends Activity {
 		if (!_recordMode) {
 			_recorderTask = new RecorderTask();
 			_currentFile = fileOperation.getStorageDir();
-			_buttonRecord.setText(R.string.recording);
+			_buttonRecord.setBackgroundResource(drawable.stop_record);
 			_recorderTask.execute(_currentFile);
 			_chronometer.setBase(SystemClock.elapsedRealtime());
 			_chronometer.start();
 		} else {
-			_buttonRecord.setText(R.string.record);
+			_buttonRecord.setBackgroundResource(drawable.record);
 			_recorderTask.cancel(true);
 			_chronometer.stop();
 			_recorderTask = null;

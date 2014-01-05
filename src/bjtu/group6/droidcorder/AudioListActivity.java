@@ -27,27 +27,23 @@ import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 import bjtu.group6.droidcorder.model.AudioFileInfo;
 import bjtu.group6.droidcorder.service.AudioListAdapter;
 import bjtu.group6.droidcorder.service.FileOperation;
 
-public class AudioListActivity extends Activity {
+public class AudioListActivity extends Activity{
 	private ListView audioList;
+	private SeekBar playSeekBar;
+	private TextView currentTime;
+	private TextView totalTime;
 	private MediaPlayer audioPlayer = null;
 
 	private final FileOperation fileOperation = new FileOperation();
-	private ArrayList<AudioFileInfo> audioFiles = new ArrayList<AudioFileInfo>();
+	private ArrayList<AudioFileInfo> audioFiles = new ArrayList<AudioFileInfo>();	
 
-	private int playing = -1;
-	private SeekBar seekBar;
-
-	private final Handler handler = new Handler();
-	private final Runnable updatePositionRunnable = new Runnable() {
-		public void run() {
-			updatePosition();
-		}
-	};
+	private int lastIndex = -1;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -57,8 +53,7 @@ public class AudioListActivity extends Activity {
 
 		audioFiles = fileOperation.getAudioFileList();
 
-		audioList.setAdapter(new AudioListAdapter(audioFiles,
-				AudioListActivity.this));
+		audioList.setAdapter(new AudioListAdapter(audioFiles,AudioListActivity.this));
 
 		setListeners();
 
@@ -73,51 +68,87 @@ public class AudioListActivity extends Activity {
 		}
 	}
 
+	Handler handler = new Handler();
+	Runnable updateThread = new Runnable(){
+		public void run() {
+			playSeekBar.setProgress(audioPlayer.getCurrentPosition());
+			handler.postDelayed(updateThread, 100);
+			currentTime.setText(String.valueOf(fileOperation.formatTime(audioPlayer.getCurrentPosition())));
+		}
+	};
+
 	private void setListeners() {
 		audioList.setOnItemClickListener(new OnItemClickListener() {
-			public void onItemClick(AdapterView<?> arg0, View arg1,
-					int position, long arg3) {
-				AudioFileInfo audioInfo = (AudioFileInfo) audioList
-						.getItemAtPosition(position);
-
-				if (audioPlayer != null && audioPlayer.isPlaying()) {
-					audioStop();
-				} else {
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+					long arg3) {
+				AudioFileInfo audioInfo = (AudioFileInfo) audioList.getItemAtPosition(arg2);
+				if (arg2 == lastIndex && audioPlayer != null && audioPlayer.isPlaying()) {
+					audioPlayer.pause();
+				}
+				else if (arg2 == lastIndex && audioPlayer != null) {
+					audioPlayer.start();
+				}
+				else {
+					if (lastIndex != -1 && arg2 != lastIndex) {
+						audioPlayer.stop();
+						audioList.getChildAt(lastIndex).setBackgroundColor(Color.TRANSPARENT);
+						handler.removeCallbacks(updateThread);
+					}
 					audioPlayer = new MediaPlayer();
-					audioPlayer.setOnCompletionListener(onCompletion);
 					try {
 						audioPlayer.setDataSource(audioInfo.getFilePath());
 						audioPlayer.prepare();
 						audioPlayer.start();
-
-						audioList.getChildAt(playing = position)
-								.setBackgroundColor(Color.LTGRAY);
-						updatePosition();
+						playSeekBar.setMax(audioPlayer.getDuration());
+						totalTime.setText(String.valueOf(fileOperation.formatTime(audioPlayer.getDuration())));
+						handler.post(updateThread);
+						audioList.getChildAt(arg2).setBackgroundColor(Color.LTGRAY);
 					} catch (IOException e) {
-						Log.e("youpi", "prepare() failed");
+						Log.e("Group6", "start player error");
 					}
 				}
+				lastIndex = arg2; 
 			}
-
 		});
 		// the listview menu Long time click item listener, is combined with the
 		// onContextItemSelected function
 		audioList
-				.setOnCreateContextMenuListener(new OnCreateContextMenuListener() {
-					@Override
-					public void onCreateContextMenu(ContextMenu menu, View v,
-							ContextMenuInfo menuInfo) {
-						menu.setHeaderTitle("Operations:");// 标题
-						menu.add(0, 0, 0, "Details");
-						menu.add(0, 1, 0, "Rename");
-						menu.add(0, 2, 0, "Share");
-						menu.add(0, 3, 0, "Delete");
-						menu.add(0, 4, 0, "Set as ringtone");
-					}
-				});
+		.setOnCreateContextMenuListener(new OnCreateContextMenuListener() {
+			@Override
+			public void onCreateContextMenu(ContextMenu menu, View v,
+					ContextMenuInfo menuInfo) {
+				menu.setHeaderTitle("Operations:");// 标题
+				menu.add(0, 0, 0, "Details");
+				menu.add(0, 1, 0, "Rename");
+				menu.add(0, 2, 0, "Share");
+				menu.add(0, 3, 0, "Delete");
+				menu.add(0, 4, 0, "Set as ringtone");
+				
+			}
+		});
+		
+		playSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
+			@Override
+			public void onProgressChanged(SeekBar seekBar, int progress,
+					boolean fromUser) {
+				if(fromUser == true) {
+					audioPlayer.seekTo(progress);
+					currentTime.setText(String.valueOf(fileOperation.formatTime(progress)));
+				}
+			}
+
+			@Override
+			public void onStartTrackingTouch(SeekBar seekBar) {
+			}
+
+			@Override
+			public void onStopTrackingTouch(SeekBar seekBar) {
+			}
+
+		});
 	}
-
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -127,22 +158,12 @@ public class AudioListActivity extends Activity {
 
 	private void findViews() {
 		audioList = (ListView) this.findViewById(R.id.audioList);
-		seekBar = (SeekBar) this.findViewById(R.id.audioList_play_seekBar);
+		playSeekBar = (SeekBar) findViewById(R.id.audioList_play_seekBar);
+		currentTime = (TextView) this.findViewById(R.id.audioList_currentTime);
+		totalTime = (TextView) this.findViewById(R.id.audioList_totalTime);
+		playSeekBar.setProgress(0);
 	}
 
-	private void audioStop() {
-		handler.removeCallbacks(updatePositionRunnable);
-		if (playing != -1) {
-			audioList.getChildAt(playing).setBackgroundColor(Color.TRANSPARENT);
-			playing = -1;
-		}
-		if (audioPlayer != null) {
-			audioPlayer.stop();
-			audioPlayer.release();
-			audioPlayer = null;
-		}
-		seekBar.setProgress(0);
-	}
 
 	/**
 	 * Long time click item response function and get the detail info of the
@@ -371,20 +392,9 @@ public class AudioListActivity extends Activity {
 	}
 
 	public void onBackClick(View view) {
-		this.finish();
+		Intent intent = new Intent();
+    	intent.setClass(AudioListActivity.this, RecorderActivity.class);
+    	startActivity(intent);
+    	AudioListActivity.this.finish();
 	}
-
-	private void updatePosition() {
-		handler.removeCallbacks(updatePositionRunnable);
-		seekBar.setProgress((audioPlayer.getCurrentPosition() * 100)
-				/ audioPlayer.getDuration());
-		handler.postDelayed(updatePositionRunnable, 100);
-	}
-
-	private MediaPlayer.OnCompletionListener onCompletion = new MediaPlayer.OnCompletionListener() {
-		@Override
-		public void onCompletion(MediaPlayer mp) {
-			audioStop();
-		}
-	};
 }

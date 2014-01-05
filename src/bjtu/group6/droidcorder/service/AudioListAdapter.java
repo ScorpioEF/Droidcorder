@@ -3,8 +3,6 @@ package bjtu.group6.droidcorder.service;
 import java.util.ArrayList;
 
 import bjtu.group6.droidcorder.R;
-import bjtu.group6.droidcorder.R.id;
-import bjtu.group6.droidcorder.R.layout;
 import bjtu.group6.droidcorder.model.AudioFileInfo;
 
 import android.content.Context;
@@ -16,13 +14,11 @@ import android.widget.TextView;
 
 public class AudioListAdapter extends BaseAdapter {
 	private ArrayList<AudioFileInfo> audioFiles;
-	private Context context;
 	private LayoutInflater mInflater;
 	
 	public AudioListAdapter(ArrayList<AudioFileInfo> audioFiles, Context context) {
 		super();
 		this.audioFiles = audioFiles;
-		this.context = context;
 		this.mInflater = LayoutInflater.from(context);
 	}
 	@Override

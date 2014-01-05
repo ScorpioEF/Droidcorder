@@ -31,8 +31,6 @@ public class FileOperation {
 	public ArrayList<AudioFileInfo> getAudioFileList() {
 		File dir = Environment.getExternalStoragePublicDirectory(path);
 		if (dir.isDirectory()) {
-			Log.i("FileOperation", "FIle dir path:" + dir.getPath());
-			Log.i("FileOperation", "FIle dir absolute path:" + dir.getAbsolutePath());
 
 			String[] filelist = dir.list();
 			for (int i = 0; i < filelist.length; i++) {
@@ -51,29 +49,31 @@ public class FileOperation {
 						audioPlayer.setDataSource(readfile.getPath());
 						audioPlayer.prepare();
 					} catch (IOException e) {
-						Log.e("Get Media", "e");
+						Log.e("Get Media", "Error");
 					}
-					int duration = audioPlayer.getDuration()/1000;
-					int minute = duration/60;
-					int second = duration - minute*60;
-					DecimalFormat df = new DecimalFormat("00");
-					audioPlayer = null;
-					audioFileInfo.setDuration(String.valueOf(df.format(minute)) + ":" + String.valueOf(df.format(second)));
-					Log.i("FileOperation", "audio file path=" + readfile.getPath());
-					Log.i("FileOperation", "absolutepath=" + readfile.getAbsolutePath());
-					Log.i("FileOperation", "name=" + readfile.getName());
+					audioFileInfo.setDuration(formatTime(audioPlayer.getDuration()));
+					audioPlayer.release();
+					Log.e("audio file path=",readfile.getPath());
+					Log.e("absolutepath=", readfile.getAbsolutePath());
+					Log.e("name=", readfile.getName());
 					audioFiles.add(audioFileInfo);
 				}
 			}
-
 		}
 		return audioFiles;
+	}
+
+	public String formatTime(int duration) {
+		int audioTime = duration/1000;
+		int minute = audioTime/60;
+		int second = audioTime%60;
+		DecimalFormat df = new DecimalFormat("00");
+		return String.valueOf(df.format(minute)) + ":" + String.valueOf(df.format(second));
 	}
 
 	public File getStorageDir() {
 		if (!Environment.getExternalStoragePublicDirectory(path).isDirectory()) {
 			Environment.getExternalStoragePublicDirectory(path).mkdir();
-			//Log.e(LOG_TAG, "Directory not created");
 		}
 		File file = new File(Environment.getExternalStoragePublicDirectory(path), generateFileName() + ".3gp");
 		return file;
