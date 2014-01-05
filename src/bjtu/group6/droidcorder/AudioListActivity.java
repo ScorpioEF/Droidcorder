@@ -309,4 +309,11 @@ public class AudioListActivity extends Activity {
 			sharingIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(audioFileInfo.getFilePath()));
 			startActivity(Intent.createChooser(sharingIntent, "Share Sound File"));
 	 }
+	 
+	 public void onBackClick(View view){
+	    	Intent intent = new Intent();
+	    	intent.setClass(AudioListActivity.this, RecorderActivity.class);
+	    	startActivity(intent);
+	    	AudioListActivity.this.finish();
+	    }
 }
