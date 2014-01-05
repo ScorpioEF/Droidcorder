@@ -5,24 +5,24 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Date;
 
+import bjtu.group6.droidcorder.R;
+import bjtu.group6.droidcorder.service.RecorderTask;
+
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.SystemClock;
 import android.app.Activity;
-import android.content.Intent;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.Chronometer;
 
 public class RecorderActivity extends Activity {
 	Button _buttonRecord;
 	Button _buttonPlay;
-	Button buttonAudioList;
 
 	Chronometer _chronometer;
 
@@ -32,7 +32,7 @@ public class RecorderActivity extends Activity {
 
 	Boolean _recordMode = false;
 	Boolean _playMode = false;
-	// RecorderTask _recorderTask;
+	RecorderTask _recorderTask;
 	private MediaRecorder _recorder = null;
 	private MediaPlayer _player = null;
 
@@ -40,24 +40,22 @@ public class RecorderActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_recorder);
-		findViews();
-		setListeners();
-		// _recorderTask = new RecorderTask();
-	}
-
-	private void setListeners() {
-		buttonAudioList.setOnClickListener(new OnClickListener(){
-
-			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent();
-    			intent.setClass(RecorderActivity.this, AudioListActivity.class);
-    			startActivity(intent);
-    			RecorderActivity.this.finish();
-			}
-			
-		});
 		
+//	    final AlertDialog.Builder alert = new AlertDialog.Builder(this);
+//	    alert.setTitle(R.string.filename);
+//	    final EditText input = new EditText(this);
+//	    alert.setView(input);
+//	    alert.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+//	        public void onClick(DialogInterface dialog, int whichButton) {
+//	            String value = input.getText().toString().trim();
+//	        }
+//	    });
+//	    alert.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+//	        public void onClick(DialogInterface dialog, int whichButton) {
+//	            dialog.cancel();
+//	        }
+//	    });
+//	    alert.show();
 	}
 
 	@Override
@@ -73,7 +71,7 @@ public class RecorderActivity extends Activity {
 		if (!isExternalStorageWritable())
 			this.finish();
 		_buttonRecord = (Button) findViewById(R.id.ButtonRecordStop);
-		_buttonPlay = (Button) findViewById(R.id.ButtonPlayStop);
+		//_buttonPlay = (Button) findViewById(R.id.ButtonPlayStop);
 		_chronometer = (Chronometer) findViewById(R.id.Chronometer);
 	}
 
@@ -112,17 +110,17 @@ public class RecorderActivity extends Activity {
 
 	public void onRecordClick(View view) {
 		if (!_recordMode) {
+			_recorderTask = new RecorderTask();
 			_currentFile = getStorageDir(_path);
 			_buttonRecord.setText(R.string.recording);
-			startRecording(_currentFile);
+			_recorderTask.execute(_currentFile);
 			_chronometer.setBase(SystemClock.elapsedRealtime());
 			_chronometer.start();
-			// _recorderTask.execute(file);
 		} else {
 			_buttonRecord.setText(R.string.record);
-			stopRecording();
+			_recorderTask.cancel(true);
 			_chronometer.stop();
-			// _recorderTask.cancel(true);
+			_recorderTask = null;
 		}
 		_recordMode = !_recordMode;
 	}
@@ -147,31 +145,4 @@ public class RecorderActivity extends Activity {
 		}
 		_playMode = !_playMode;
 	}
-
-	private void startRecording(File file) {
-		_recorder = new MediaRecorder();
-		_recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-		_recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-		_recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-		_recorder.setOutputFile(file.getAbsolutePath());
-
-		try {
-			_recorder.prepare();
-		} catch (IOException e) {
-			// Log.e(LOG_TAG, "prepare() failed");
-		}
-
-		_recorder.start();
-	}
-
-	private void stopRecording() {
-		_recorder.stop();
-		_recorder.release();
-		_recorder = null;
-	}
-	
-	private void findViews(){
-		buttonAudioList = (Button)this.findViewById(R.id.btnAudioList);
-    }
 }
-
