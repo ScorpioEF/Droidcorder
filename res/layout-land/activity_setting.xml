@@ -6,7 +6,7 @@
 
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="50dp"
+        android:layout_height="30dp"
         android:background="#a9a9a9"
         android:orientation="horizontal" >
 
@@ -27,7 +27,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/setting"
-            android:textSize="30sp"
+            android:textSize="25sp"
             android:textStyle="bold" />
 
         <TextView
@@ -51,10 +51,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="20"
-            android:text="@string/dfFormat"
-            android:textSize="20sp"
             android:clickable="true"
-            android:onClick="onFormatSettingClick"/>
+            android:onClick="onFormatSettingClick"
+            android:paddingLeft="20dp"
+            android:text="@string/dfFormat"
+            android:textSize="20sp" />
 
         <Button
             android:id="@+id/btn_defaut_format"
@@ -77,10 +78,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="20"
-            android:text="@string/dfPath"
-            android:textSize="20sp" 
             android:clickable="true"
-            android:onClick="onDefaultPathClick"/>
+            android:onClick="onDefaultPathClick"
+            android:paddingLeft="20dp"
+            android:text="@string/dfPath"
+            android:textSize="20sp" />
 
         <Button
             android:id="@+id/btn_default_path"
@@ -103,10 +105,11 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="20"
-            android:text="@string/maxDuration"
-            android:textSize="20sp" 
             android:clickable="true"
-            android:onClick="onMaxDurationClick"/>
+            android:onClick="onMaxDurationClick"
+            android:paddingLeft="20dp"
+            android:text="@string/maxDuration"
+            android:textSize="20sp" />
 
         <Button
             android:id="@+id/btn_max_dura"
@@ -128,10 +131,11 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="20"
-            android:text="@string/aboutUs"
-            android:textSize="20sp"
             android:clickable="true"
-            android:onClick="onAboutUsClick" />
+            android:onClick="onAboutUsClick"
+            android:paddingLeft="20dp"
+            android:text="@string/aboutUs"
+            android:textSize="20sp" />
 
         <Button
             android:id="@+id/tn_about"

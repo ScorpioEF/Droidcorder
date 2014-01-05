@@ -2,12 +2,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/backgroud"
     android:orientation="vertical" >
 
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="50dp"
+        android:layout_height="30dp"
         android:background="#a9a9a9" >
 
         <Button
@@ -25,11 +24,11 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="1"
+            android:clickable="true"
             android:gravity="center"
             android:text="@string/dfFormat"
-            android:textSize="30sp"
-            android:textStyle="bold" 
-            android:clickable="true"/>
+            android:textSize="25sp"
+            android:textStyle="bold" />
 
         <Button
             android:id="@+id/btnSure"
@@ -46,7 +45,9 @@
         android:id="@id/android:list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/backgroud"
         android:entries="@array/format_string" >
+
     </ListView>
 
 </LinearLayout>
