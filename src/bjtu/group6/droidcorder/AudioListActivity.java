@@ -27,7 +27,8 @@ import bjtu.group6.droidcorder.service.FileOperation;
 public class AudioListActivity extends Activity {
 	private ArrayList<AudioFileInfo> audioFiles = new ArrayList<AudioFileInfo>();
 	private ListView audioList;
-
+	private final FileOperation fileOperation = new FileOperation();
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -40,7 +41,7 @@ public class AudioListActivity extends Activity {
 		audioinfo.setFileName("test1");
 		audioinfo.setDuration("10.50");
 		audioinfo.setCreateTime("2014.1.1");
-		audioinfo.setFilePath("/sdcard/test1.mp3");
+		audioinfo.setFilePath("/mnt/sdcard/test1.mp3");
 		
 		AudioFileInfo audioinfo2 = new AudioFileInfo();
 		audioinfo2.setAudioId(111222);
@@ -99,6 +100,7 @@ public class AudioListActivity extends Activity {
 		  menu.add(0, 1, 0, "Rename");
 		  menu.add(0, 2, 0, "Share");
 		  menu.add(0, 3, 0, "Delete");
+		  menu.add(0, 4, 0, "Set as ringtone");
 	  }
 	 };
 
@@ -133,7 +135,10 @@ public class AudioListActivity extends Activity {
 			//Delete
 			delete(audioFileInfo);
 			break;
-			
+		case 4:
+			//set as ringtone
+			setAsRingtone(audioFileInfo);
+			break;
 		default:
 			break;
 		}
@@ -171,7 +176,6 @@ public class AudioListActivity extends Activity {
 	  */
 	 private void rename(final AudioFileInfo audioFileInfo){
 		 final EditText editText = new EditText(this);
-		 final FileOperation fileOperation = new FileOperation();
 		 final String oldFileName = audioFileInfo.getFileName();
 		 new AlertDialog.Builder(this)
 			.setTitle("Input new name")
@@ -210,15 +214,54 @@ public class AudioListActivity extends Activity {
 	  */
 	 private void delete(AudioFileInfo audioFileInfo)
 	 {
-		 final FileOperation fileOperation = new FileOperation();
 		 final String oldFileName = audioFileInfo.getFileName();
 		 boolean deleteFlag = fileOperation.deleteFile(audioFileInfo.getFilePath());
-			if(deleteFlag){
-				Log.i("AudioListActivity", "delete file " + audioFileInfo.getFilePath() + " success!");
-				Toast.makeText(AudioListActivity.this, "Delete file " + oldFileName + " success!", Toast.LENGTH_SHORT).show();
-			}else{
-				Log.e("AudioListActivity", "delete file " + audioFileInfo.getFilePath() + " failed!");
-				Toast.makeText(AudioListActivity.this, "Delete file " + oldFileName + " failed!", Toast.LENGTH_SHORT).show();
-			}
+		 if(deleteFlag){
+			Log.i("AudioListActivity", "delete file " + audioFileInfo.getFilePath() + " success!");
+			Toast.makeText(AudioListActivity.this, "Delete file " + oldFileName + " success!", Toast.LENGTH_SHORT).show();
+		 }else{
+			Log.e("AudioListActivity", "delete file " + audioFileInfo.getFilePath() + " failed!");
+			Toast.makeText(AudioListActivity.this, "Delete file " + oldFileName + " failed!", Toast.LENGTH_SHORT).show();
+		 }
 	 }
+	 
+	 /**
+	  * setAsRingtone
+	  * @author FengXiangmin
+	  * @param audioFileInfo
+	  */
+	 private void setAsRingtone(final AudioFileInfo audioFileInfo){
+		 String[] choices={"Phone Ringtone","Alarm Ringtone","Notification Ringtone"};
+		 AlertDialog dialog = new AlertDialog.Builder(this)  
+         .setTitle("Set As ...")  
+         .setItems(choices, new OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				String message;
+				switch (which) {  
+		         case 0:  
+		        	fileOperation.setAsCallRingtone(AudioListActivity.this, audioFileInfo);
+		        	message = "Set file " + audioFileInfo.getFileName() + " as Phone Ringtone success!";
+		     		Log.i("AudioListActivity", message);
+		     		Toast.makeText(AudioListActivity.this, message, Toast.LENGTH_SHORT).show();  
+		            break;  
+		         case 1:  
+		        	 fileOperation.setAsAlarmRingtone(AudioListActivity.this, audioFileInfo);
+		        	 message = "Set file " + audioFileInfo.getFileName() + " as Alarm Ringtone success!";
+			     	 Log.i("AudioListActivity", message);
+			     	 Toast.makeText(AudioListActivity.this, message, Toast.LENGTH_SHORT).show(); 
+			         break;  
+		         case 2:  
+		        	 fileOperation.setAsNotificationRingtone(AudioListActivity.this, audioFileInfo);
+		        	 message = "Set file " + audioFileInfo.getFileName() + " as Notification Ringtone success!";
+			     	 Log.i("AudioListActivity", message);
+			     	 Toast.makeText(AudioListActivity.this, message, Toast.LENGTH_SHORT).show();  
+			         break;    
+				
+			}
+		}}).create();  
+		 dialog.show();  
+		
+	 }	 
 }
