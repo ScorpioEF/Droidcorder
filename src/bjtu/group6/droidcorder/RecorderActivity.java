@@ -120,4 +120,11 @@ public class RecorderActivity extends Activity {
 		startActivity(i);
 	}
 	
+	public void onSettingClick(View view){
+		Intent intent = new Intent();
+    	intent.setClass(RecorderActivity.this, ConfigActivity.class);
+    	startActivity(intent);
+    	RecorderActivity.this.finish();
+	}
+	
 }

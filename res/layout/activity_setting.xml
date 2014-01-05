@@ -51,15 +51,18 @@
             android:layout_height="wrap_content"
             android:layout_weight="20"
             android:text="@string/dfFormat"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:clickable="true"
+            android:onClick="onFormatSettingClick"/>
 
         <Button
-            android:id="@+id/button1"
+            android:id="@+id/btn_defaut_format"
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0"
-            android:background="@drawable/right_arrow_nor" />
+            android:background="@drawable/right_arrow_nor"
+            android:onClick="onFormatSettingClick" />
 
     </LinearLayout>
 
