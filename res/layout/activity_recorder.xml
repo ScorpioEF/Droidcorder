@@ -18,13 +18,12 @@
             android:text="@string/soundRecorder"
             android:textSize="30sp"
             android:textStyle="bold" />
-
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="20dp"
         android:orientation="vertical" >
 
         <Chronometer
@@ -34,53 +33,56 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:textAppearance="?android:attr/textAppearanceLarge" />
-
     </LinearLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="250dp"
-        android:layout_marginTop="20dp" >
+        android:layout_marginTop="20dp"
+        android:layout_weight="0.78" >
 
         <ImageView
             android:id="@+id/imageView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/tape_bottom" />
-
     </FrameLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="100dp"
         android:layout_marginTop="40dp"
-        android:background="@drawable/background_key"
+        android:background="#808080"
         android:orientation="horizontal" >
 
         <Button
             android:id="@+id/record_btnSetting"
-            android:layout_width="wrap_content"
+            android:layout_width="60dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
             android:layout_weight="1"
-            android:text="setting" />
+            android:background="@drawable/setting" />
 
         <Button
             android:id="@+id/ButtonRecordStop"
-            android:layout_width="wrap_content"
+            android:layout_width="60dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="1"
-            android:background="@drawable/btn_record_normal"
+            android:background="@drawable/record"
             android:onClick="onRecordClick" />
 
         <Button
             android:id="@+id/btnAudioList"
-            android:layout_width="wrap_content"
+            android:layout_width="60dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
             android:layout_weight="1"
-            android:text="AudioList" />
+            android:background="@drawable/play_list" />
     </LinearLayout>
 
 </LinearLayout>
