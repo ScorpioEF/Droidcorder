@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.SystemClock;
 import android.app.Activity;
+import android.content.Intent;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -125,6 +126,12 @@ public class RecorderActivity extends Activity {
 		_recordMode = !_recordMode;
 	}
 
+	public void onListMediaClick(View view)
+	{
+		Intent i = new Intent(this, AudioListActivity.class);
+		startActivity(i);
+	}
+	
 	public void onPlayClick(View view) {
 		_player = new MediaPlayer();
 		if (_currentFile == null)

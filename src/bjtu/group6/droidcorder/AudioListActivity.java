@@ -6,6 +6,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -130,6 +132,7 @@ public class AudioListActivity extends Activity {
 			break;
 		case 2:
 			// Share
+			share(audioFileInfo);
 			break;
 		case 3:
 			//Delete
@@ -264,4 +267,12 @@ public class AudioListActivity extends Activity {
 		 dialog.show();  
 		
 	 }	 
+	 
+	 private void share(final AudioFileInfo audioFileInfo)
+	 {
+			Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+			sharingIntent.setType("audio/*");
+			sharingIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(audioFileInfo.getFilePath()));
+			startActivity(Intent.createChooser(sharingIntent, "Share Sound File"));
+	 }
 }
