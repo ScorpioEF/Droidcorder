@@ -25,19 +25,17 @@ public final class R {
         public static final int activity_vertical_margin=0x7f050001;
     }
     public static final class drawable {
-        public static final int back=0x7f020000;
-        public static final int backgroud=0x7f020001;
-        public static final int background_key=0x7f020002;
-        public static final int ic_launcher=0x7f020003;
-        public static final int play_list=0x7f020004;
-        public static final int qwe=0x7f020005;
-        public static final int record=0x7f020006;
-        public static final int right_arrow_nor=0x7f020007;
-        public static final int setting=0x7f020008;
-        public static final int stop_record=0x7f020009;
-        public static final int tape_bottom=0x7f02000a;
-        public static final int title_back_normal=0x7f02000b;
-        public static final int toolbar_fav_icon_res=0x7f02000c;
+        public static final int backgroud=0x7f020000;
+        public static final int ic_launcher=0x7f020001;
+        public static final int play_list=0x7f020002;
+        public static final int record=0x7f020003;
+        public static final int right_arrow_nor=0x7f020004;
+        public static final int setting=0x7f020005;
+        public static final int stop_record=0x7f020006;
+        public static final int tape_bottom=0x7f020007;
+        public static final int title_back_normal=0x7f020008;
+        public static final int toolbar_fav_icon_res=0x7f020009;
+        public static final int yes=0x7f02000a;
     }
     public static final class id {
         public static final int ButtonRecordStop=0x7f0a000b;

@@ -8,9 +8,11 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -24,6 +26,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.SeekBar;
 import android.widget.Toast;
 import bjtu.group6.droidcorder.model.AudioFileInfo;
 import bjtu.group6.droidcorder.service.AudioListAdapter;
@@ -36,6 +39,16 @@ public class AudioListActivity extends Activity {
 	private final FileOperation fileOperation = new FileOperation();
 	private ArrayList<AudioFileInfo> audioFiles = new ArrayList<AudioFileInfo>();
 
+	private int playing = -1;
+	private SeekBar seekBar;
+
+	private final Handler handler = new Handler();
+	private final Runnable updatePositionRunnable = new Runnable() {
+		public void run() {
+			updatePosition();
+		}
+	};
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -43,7 +56,7 @@ public class AudioListActivity extends Activity {
 		findViews();
 
 		audioFiles = fileOperation.getAudioFileList();
-		
+
 		audioList.setAdapter(new AudioListAdapter(audioFiles,
 				AudioListActivity.this));
 
@@ -59,21 +72,27 @@ public class AudioListActivity extends Activity {
 			audioPlayer = null;
 		}
 	}
+
 	private void setListeners() {
 		audioList.setOnItemClickListener(new OnItemClickListener() {
-			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
-					long arg3) {
-				AudioFileInfo audioInfo = (AudioFileInfo) audioList.getItemAtPosition(arg2);
+			public void onItemClick(AdapterView<?> arg0, View arg1,
+					int position, long arg3) {
+				AudioFileInfo audioInfo = (AudioFileInfo) audioList
+						.getItemAtPosition(position);
 
 				if (audioPlayer != null && audioPlayer.isPlaying()) {
-					audioPlayer.stop();
-				}
-				else {
+					audioStop();
+				} else {
 					audioPlayer = new MediaPlayer();
+					audioPlayer.setOnCompletionListener(onCompletion);
 					try {
 						audioPlayer.setDataSource(audioInfo.getFilePath());
 						audioPlayer.prepare();
 						audioPlayer.start();
+
+						audioList.getChildAt(playing = position)
+								.setBackgroundColor(Color.LTGRAY);
+						updatePosition();
 					} catch (IOException e) {
 						Log.e("youpi", "prepare() failed");
 					}
@@ -81,20 +100,21 @@ public class AudioListActivity extends Activity {
 			}
 
 		});
-		//the listview menu Long time click item listener, is combined with the onContextItemSelected function
-		audioList.setOnCreateContextMenuListener(new OnCreateContextMenuListener()
-		{
-			@Override
-			public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo)
-			{
-				menu.setHeaderTitle("Operations:");//标题
-				menu.add(0, 0, 0, "Details");
-				menu.add(0, 1, 0, "Rename");
-				menu.add(0, 2, 0, "Share");
-				menu.add(0, 3, 0, "Delete");
-				menu.add(0, 4, 0, "Set as ringtone");
-			}
-		});
+		// the listview menu Long time click item listener, is combined with the
+		// onContextItemSelected function
+		audioList
+				.setOnCreateContextMenuListener(new OnCreateContextMenuListener() {
+					@Override
+					public void onCreateContextMenu(ContextMenu menu, View v,
+							ContextMenuInfo menuInfo) {
+						menu.setHeaderTitle("Operations:");// 标题
+						menu.add(0, 0, 0, "Details");
+						menu.add(0, 1, 0, "Rename");
+						menu.add(0, 2, 0, "Share");
+						menu.add(0, 3, 0, "Delete");
+						menu.add(0, 4, 0, "Set as ringtone");
+					}
+				});
 
 	}
 
@@ -107,22 +127,37 @@ public class AudioListActivity extends Activity {
 
 	private void findViews() {
 		audioList = (ListView) this.findViewById(R.id.audioList);
+		seekBar = (SeekBar) this.findViewById(R.id.audioList_play_seekBar);
 	}
 
+	private void audioStop() {
+		handler.removeCallbacks(updatePositionRunnable);
+		if (playing != -1) {
+			audioList.getChildAt(playing).setBackgroundColor(Color.TRANSPARENT);
+			playing = -1;
+		}
+		if (audioPlayer != null) {
+			audioPlayer.stop();
+			audioPlayer.release();
+			audioPlayer = null;
+		}
+		seekBar.setProgress(0);
+	}
 
 	/**
-	 * Long time click item response function and get the detail info of the chosen item
+	 * Long time click item response function and get the detail info of the
+	 * chosen item
 	 */
 	@Override
-	public boolean onContextItemSelected(MenuItem item)
-	{
+	public boolean onContextItemSelected(MenuItem item) {
 
 		ContextMenuInfo info = item.getMenuInfo();
 		AdapterView.AdapterContextMenuInfo contextMenuInfo = (AdapterContextMenuInfo) info;
 		// get the item position
 		int position = contextMenuInfo.position;
 		final AudioFileInfo audioFileInfo = audioFiles.get(position);
-		Log.i("AudioListActivity", "Get the audioFile info:" + audioFileInfo.getFileName());
+		Log.i("AudioListActivity",
+				"Get the audioFile info:" + audioFileInfo.getFileName());
 
 		switch (item.getItemId()) {
 		case 0:
@@ -131,18 +166,18 @@ public class AudioListActivity extends Activity {
 			break;
 		case 1:
 			// Rename
-			rename(audioFileInfo);		
+			rename(audioFileInfo);
 			break;
 		case 2:
 			// Share
 			share(audioFileInfo);
 			break;
 		case 3:
-			//Delete
+			// Delete
 			delete(audioFileInfo);
 			break;
 		case 4:
-			//set as ringtone
+			// set as ringtone
 			setAsRingtone(audioFileInfo);
 			break;
 		default:
@@ -153,167 +188,203 @@ public class AudioListActivity extends Activity {
 
 	/**
 	 * Show detail info
+	 * 
 	 * @author FengXiangmin
 	 * @param audioFileInfo
 	 */
-	private void showDetails(AudioFileInfo audioFileInfo){
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);  
-		String[] message = {"Filename:" + audioFileInfo.getFileName(),
+	private void showDetails(AudioFileInfo audioFileInfo) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		String[] message = { "Filename:" + audioFileInfo.getFileName(),
 				"FilePath:" + audioFileInfo.getFilePath(),
 				"CreateTime:" + audioFileInfo.getCreateTime(),
 				"FileSize:" + audioFileInfo.getFileSize(),
-				"Duration:" + audioFileInfo.getDuration()};
+				"Duration:" + audioFileInfo.getDuration() };
 
-		builder.setTitle("Details info");  
-		builder.setItems(message,null);  
-		builder.setPositiveButton("OK", new android.content.DialogInterface.OnClickListener() {  
-			public void onClick(DialogInterface dialog, int which)  
-			{  
-				dialog.dismiss();  
-			}  
-		});  
-		builder.show(); 
+		builder.setTitle("Details info");
+		builder.setItems(message, null);
+		builder.setPositiveButton("OK",
+				new android.content.DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+					}
+				});
+		builder.show();
 	}
-
 
 	/**
 	 * rename
+	 * 
 	 * @author FengXiangmin
 	 * @param audioFileInfo
 	 */
-	private void rename(final AudioFileInfo audioFileInfo){
+	private void rename(final AudioFileInfo audioFileInfo) {
 		final EditText editText = new EditText(this);
 		editText.setText(audioFileInfo.getFileName());
 		final String oldFileName = audioFileInfo.getFileName();
-		new AlertDialog.Builder(this)
-		.setTitle("Input new name")
-		.setIcon(android.R.drawable.ic_dialog_info)
-		.setView(editText)
-		.setPositiveButton("Yes", new OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				// rename the filename
-				String newFilename = editText.getText().toString();
-				boolean renameFlag = fileOperation.updateFile(audioFileInfo.getFilePath(), newFilename);
-				if(renameFlag){
-					Log.i("AudioListActivity", "rename file " + oldFileName + " to name " + newFilename + " success!");
-					Toast.makeText(AudioListActivity.this, "Rename file " + oldFileName + " success!", Toast.LENGTH_SHORT).show();
-				}else{
-					Log.e("AudioListActivity", "rename file " + oldFileName + " to name " + newFilename + " failed!");
-					Toast.makeText(AudioListActivity.this, "Rename file " + oldFileName + " failed!", Toast.LENGTH_SHORT).show();
-				}
-				//refresh the listview
-				audioFiles.clear();
-				audioFiles = fileOperation.getAudioFileList();
-				
-				audioList.setAdapter(new AudioListAdapter(audioFiles,
-						AudioListActivity.this));
-				BaseAdapter sAdapter = (BaseAdapter)audioList.getAdapter();
-		        sAdapter.notifyDataSetChanged();
-			}
-		})
-		.setNegativeButton("Cancel", new OnClickListener() {
+		new AlertDialog.Builder(this).setTitle("Input new name")
+				.setIcon(android.R.drawable.ic_dialog_info).setView(editText)
+				.setPositiveButton("Yes", new OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// rename the filename
+						String newFilename = editText.getText().toString();
+						boolean renameFlag = fileOperation.updateFile(
+								audioFileInfo.getFilePath(), newFilename);
+						if (renameFlag) {
+							Log.i("AudioListActivity", "rename file "
+									+ oldFileName + " to name " + newFilename
+									+ " success!");
+							Toast.makeText(AudioListActivity.this,
+									"Rename file " + oldFileName + " success!",
+									Toast.LENGTH_SHORT).show();
+						} else {
+							Log.e("AudioListActivity", "rename file "
+									+ oldFileName + " to name " + newFilename
+									+ " failed!");
+							Toast.makeText(AudioListActivity.this,
+									"Rename file " + oldFileName + " failed!",
+									Toast.LENGTH_SHORT).show();
+						}
+						// refresh the listview
+						audioFiles.clear();
+						audioFiles = fileOperation.getAudioFileList();
 
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				// Cancel to rename
-				Log.i("AudioListActivity", "rename file " +oldFileName + " Canceled!");
-			}
-		})
-		.show();
-		
+						audioList.setAdapter(new AudioListAdapter(audioFiles,
+								AudioListActivity.this));
+						BaseAdapter sAdapter = (BaseAdapter) audioList
+								.getAdapter();
+						sAdapter.notifyDataSetChanged();
+					}
+				}).setNegativeButton("Cancel", new OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// Cancel to rename
+						Log.i("AudioListActivity", "rename file " + oldFileName
+								+ " Canceled!");
+					}
+				}).show();
+
 	}
 
 	/**
 	 * delete
+	 * 
 	 * @author FengXiangmin
 	 * @param audioFileInfo
 	 */
-	private void delete(final AudioFileInfo audioFileInfo)
-	{
+	private void delete(final AudioFileInfo audioFileInfo) {
 		final String oldFileName = audioFileInfo.getFileName();
-		new AlertDialog.Builder(this)
-		.setTitle("Delete Confirm")
-		.setIcon(android.R.drawable.ic_dialog_info)
-		.setMessage("Delete file " + oldFileName + "?")
-		.setPositiveButton("Yes", new OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				// delete the file
-				boolean deleteFlag = fileOperation.deleteFile(audioFileInfo.getFilePath());
-				if(deleteFlag){
-					Log.i("AudioListActivity", "delete file " + audioFileInfo.getFilePath() + " success!");
-					Toast.makeText(AudioListActivity.this, "Delete file " + oldFileName + " success!", Toast.LENGTH_SHORT).show();
-				}else{
-					Log.e("AudioListActivity", "delete file " + audioFileInfo.getFilePath() + " failed!");
-					Toast.makeText(AudioListActivity.this, "Delete file " + oldFileName + " failed!", Toast.LENGTH_SHORT).show();
-				}
-				//refresh the listview
-				audioFiles.clear();
-				audioFiles = fileOperation.getAudioFileList();
-				
-				audioList.setAdapter(new AudioListAdapter(audioFiles,
-						AudioListActivity.this));
-				BaseAdapter sAdapter = (BaseAdapter)audioList.getAdapter();
-		        sAdapter.notifyDataSetChanged();
-			}
-		})
-		.setNegativeButton("Cancel", null)
-		.show();
+		new AlertDialog.Builder(this).setTitle("Delete Confirm")
+				.setIcon(android.R.drawable.ic_dialog_info)
+				.setMessage("Delete file " + oldFileName + "?")
+				.setPositiveButton("Yes", new OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// delete the file
+						boolean deleteFlag = fileOperation
+								.deleteFile(audioFileInfo.getFilePath());
+						if (deleteFlag) {
+							Log.i("AudioListActivity", "delete file "
+									+ audioFileInfo.getFilePath() + " success!");
+							Toast.makeText(AudioListActivity.this,
+									"Delete file " + oldFileName + " success!",
+									Toast.LENGTH_SHORT).show();
+						} else {
+							Log.e("AudioListActivity", "delete file "
+									+ audioFileInfo.getFilePath() + " failed!");
+							Toast.makeText(AudioListActivity.this,
+									"Delete file " + oldFileName + " failed!",
+									Toast.LENGTH_SHORT).show();
+						}
+						// refresh the listview
+						audioFiles.clear();
+						audioFiles = fileOperation.getAudioFileList();
+
+						audioList.setAdapter(new AudioListAdapter(audioFiles,
+								AudioListActivity.this));
+						BaseAdapter sAdapter = (BaseAdapter) audioList
+								.getAdapter();
+						sAdapter.notifyDataSetChanged();
+					}
+				}).setNegativeButton("Cancel", null).show();
 	}
 
 	/**
 	 * setAsRingtone
+	 * 
 	 * @author FengXiangmin
 	 * @param audioFileInfo
 	 */
-	private void setAsRingtone(final AudioFileInfo audioFileInfo){
-		String[] choices={"Phone Ringtone","Alarm Ringtone","Notification Ringtone"};
-		AlertDialog dialog = new AlertDialog.Builder(this)  
-		.setTitle("Set As ...")  
-		.setItems(choices, new OnClickListener() {
+	private void setAsRingtone(final AudioFileInfo audioFileInfo) {
+		String[] choices = { "Phone Ringtone", "Alarm Ringtone",
+				"Notification Ringtone" };
+		AlertDialog dialog = new AlertDialog.Builder(this)
+				.setTitle("Set As ...")
+				.setItems(choices, new OnClickListener() {
 
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				String message;
-				switch (which) {  
-		         case 0:  
-		        	fileOperation.setAsCallRingtone(AudioListActivity.this, audioFileInfo);
-		        	message = "Set file " + audioFileInfo.getFileName() + " as Phone Ringtone success!";
-		     		Log.i("AudioListActivity", message);
-		     		Toast.makeText(AudioListActivity.this, message, Toast.LENGTH_SHORT).show();  
-		            break;  
-		         case 1:  
-		        	 fileOperation.setAsAlarmRingtone(AudioListActivity.this, audioFileInfo);
-		        	 message = "Set file " + audioFileInfo.getFileName() + " as Alarm Ringtone success!";
-			     	 Log.i("AudioListActivity", message);
-			     	 Toast.makeText(AudioListActivity.this, message, Toast.LENGTH_SHORT).show(); 
-			         break;  
-		         case 2:  
-		        	 fileOperation.setAsNotificationRingtone(AudioListActivity.this, audioFileInfo);
-		        	 message = "Set file " + audioFileInfo.getFileName() + " as Notification Ringtone success!";
-			     	 Log.i("AudioListActivity", message);
-			     	 Toast.makeText(AudioListActivity.this, message, Toast.LENGTH_SHORT).show();  
-			         break;    
-				
-			}
-		}}).create();  
-		 dialog.show();  
-		
-	 }	 
-	 
-	 private void share(final AudioFileInfo audioFileInfo)
-	 {
-			Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
-			sharingIntent.setType("audio/*");
-			sharingIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(audioFileInfo.getFilePath()));
-			startActivity(Intent.createChooser(sharingIntent, "Share Sound File"));
-	 }
-	 
-	 public void onBackClick(View view){
-	    	Intent intent = new Intent();
-	    	intent.setClass(AudioListActivity.this, RecorderActivity.class);
-	    	startActivity(intent);
-	    	AudioListActivity.this.finish();
-	    }
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						String message;
+						switch (which) {
+						case 0:
+							fileOperation.setAsCallRingtone(
+									AudioListActivity.this, audioFileInfo);
+							message = "Set file " + audioFileInfo.getFileName()
+									+ " as Phone Ringtone success!";
+							Log.i("AudioListActivity", message);
+							Toast.makeText(AudioListActivity.this, message,
+									Toast.LENGTH_SHORT).show();
+							break;
+						case 1:
+							fileOperation.setAsAlarmRingtone(
+									AudioListActivity.this, audioFileInfo);
+							message = "Set file " + audioFileInfo.getFileName()
+									+ " as Alarm Ringtone success!";
+							Log.i("AudioListActivity", message);
+							Toast.makeText(AudioListActivity.this, message,
+									Toast.LENGTH_SHORT).show();
+							break;
+						case 2:
+							fileOperation.setAsNotificationRingtone(
+									AudioListActivity.this, audioFileInfo);
+							message = "Set file " + audioFileInfo.getFileName()
+									+ " as Notification Ringtone success!";
+							Log.i("AudioListActivity", message);
+							Toast.makeText(AudioListActivity.this, message,
+									Toast.LENGTH_SHORT).show();
+							break;
+
+						}
+					}
+				}).create();
+		dialog.show();
+
+	}
+
+	private void share(final AudioFileInfo audioFileInfo) {
+		Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+		sharingIntent.setType("audio/*");
+		sharingIntent.putExtra(Intent.EXTRA_STREAM,
+				Uri.parse(audioFileInfo.getFilePath()));
+		startActivity(Intent.createChooser(sharingIntent, "Share Sound File"));
+	}
+
+	public void onBackClick(View view) {
+		this.finish();
+	}
+
+	private void updatePosition() {
+		handler.removeCallbacks(updatePositionRunnable);
+		seekBar.setProgress((audioPlayer.getCurrentPosition() * 100)
+				/ audioPlayer.getDuration());
+		handler.postDelayed(updatePositionRunnable, 100);
+	}
+
+	private MediaPlayer.OnCompletionListener onCompletion = new MediaPlayer.OnCompletionListener() {
+		@Override
+		public void onCompletion(MediaPlayer mp) {
+			audioStop();
+		}
+	};
 }
