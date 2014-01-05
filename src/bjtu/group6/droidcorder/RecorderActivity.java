@@ -1,61 +1,76 @@
 package bjtu.group6.droidcorder;
 
 import java.io.File;
-import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Date;
 
 import bjtu.group6.droidcorder.R;
 import bjtu.group6.droidcorder.service.RecorderTask;
 
-import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.SystemClock;
 import android.app.Activity;
-import android.util.Log;
+import android.content.Intent;
 import android.view.Menu;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.Chronometer;
 
 public class RecorderActivity extends Activity {
 	Button _buttonRecord;
-	Button _buttonPlay;
+	Button buttonAudioList;
 
 	Chronometer _chronometer;
 
-	String _path = "/";
+	String _path = "/Droidcorder";
 
 	File _currentFile = null;
 
 	Boolean _recordMode = false;
-	Boolean _playMode = false;
 	RecorderTask _recorderTask;
 	private MediaRecorder _recorder = null;
-	private MediaPlayer _player = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_recorder);
-		
-//	    final AlertDialog.Builder alert = new AlertDialog.Builder(this);
-//	    alert.setTitle(R.string.filename);
-//	    final EditText input = new EditText(this);
-//	    alert.setView(input);
-//	    alert.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-//	        public void onClick(DialogInterface dialog, int whichButton) {
-//	            String value = input.getText().toString().trim();
-//	        }
-//	    });
-//	    alert.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-//	        public void onClick(DialogInterface dialog, int whichButton) {
-//	            dialog.cancel();
-//	        }
-//	    });
-//	    alert.show();
+		buttonAudioList = (Button)this.findViewById(R.id.btnAudioList);
+		setListeners();
+
+		//	    final AlertDialog.Builder alert = new AlertDialog.Builder(this);
+		//	    alert.setTitle(R.string.filename);
+		//	    final EditText input = new EditText(this);
+		//	    alert.setView(input);
+		//	    alert.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+		//	        public void onClick(DialogInterface dialog, int whichButton) {
+		//	            String value = input.getText().toString().trim();
+		//	        }
+		//	    });
+		//	    alert.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+		//	        public void onClick(DialogInterface dialog, int whichButton) {
+		//	            dialog.cancel();
+		//	        }
+		//	    });
+		//	    alert.show();
+	}
+
+
+	private void setListeners() {
+		buttonAudioList.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent();
+				intent.setClass(RecorderActivity.this, AudioListActivity.class);
+				startActivity(intent);
+				RecorderActivity.this.finish();
+			}
+
+		});
+
 	}
 
 	@Override
@@ -71,7 +86,6 @@ public class RecorderActivity extends Activity {
 		if (!isExternalStorageWritable())
 			this.finish();
 		_buttonRecord = (Button) findViewById(R.id.ButtonRecordStop);
-		//_buttonPlay = (Button) findViewById(R.id.ButtonPlayStop);
 		_chronometer = (Chronometer) findViewById(R.id.Chronometer);
 	}
 
@@ -81,11 +95,6 @@ public class RecorderActivity extends Activity {
 		if (_recorder != null) {
 			_recorder.release();
 			_recorder = null;
-		}
-
-		if (_player != null) {
-			_player.release();
-			_player = null;
 		}
 	}
 
@@ -97,15 +106,17 @@ public class RecorderActivity extends Activity {
 	}
 
 	public File getStorageDir(String path) {
+		if (!Environment.getExternalStoragePublicDirectory(path).isDirectory()) {
+			Environment.getExternalStoragePublicDirectory(path).mkdir();
+			//Log.e(LOG_TAG, "Directory not created");
+		}
 		File file = new File(Environment.getExternalStoragePublicDirectory(path), generateFileName() + ".3gp");
-		//if (!file.mkdirs()) {
-			// Log.e(LOG_TAG, "Directory not created");
-		//}
 		return file;
 	}
 
+
 	private String generateFileName() {
-		 return new Timestamp(new Date().getTime()).toString();
+		return new Timestamp(new Date().getTime()).toString();
 	}
 
 	public void onRecordClick(View view) {
@@ -125,24 +136,4 @@ public class RecorderActivity extends Activity {
 		_recordMode = !_recordMode;
 	}
 
-	public void onPlayClick(View view) {
-		_player = new MediaPlayer();
-		if (_currentFile == null)
-			return;
-		if (!_playMode) {
-			try {
-				_player.setDataSource(_currentFile.getAbsolutePath());
-				_player.prepare();
-				_player.start();
-				_buttonPlay.setText(R.string.stop);
-			} catch (IOException e) {
-				Log.e("youpi", "prepare() failed");
-			}
-		} else {
-			_player.release();
-			_player = null;
-			_buttonPlay.setText(R.string.play);
-		}
-		_playMode = !_playMode;
-	}
 }
