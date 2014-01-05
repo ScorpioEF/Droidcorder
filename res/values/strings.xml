@@ -17,4 +17,19 @@
 	<string name="blankString">   </string>
 	<string name="sounds">Sounds</string>
     <string name="title_activity_audio_list">AudioList</string>
+    <string name="title_activity_config">Configeration</string>
+    <string name="format_config">format config</string>
+    <string name="title_activity_format_detail">FormatDetail</string>    
+    <string-array name="format_string">
+        <item>AAC</item>
+        <item>AMR</item>
+        <item>MP4</item>
+        <item>3GP</item>
+    </string-array>
+    <string-array name="format_value">
+        <item>AAC_ADTS</item>
+        <item>AMR_NB</item>
+        <item>MPEG_4</item>
+        <item>THREE_GPP</item>
+    </string-array> 
 </resources>

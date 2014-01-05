@@ -1,0 +1,5 @@
+<?xml version='1.0' encoding='utf-8' standalone='yes' ?>
+<map>
+ 	<string name="FORMAT_KEY">THREE_GPP</string>
+ 	<int name="INDEX_KEY" value="0"/>
+</map>

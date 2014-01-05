@@ -15,7 +15,8 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="0.06"
-            android:background="@drawable/title_back_normal" />
+            android:background="@drawable/title_back_normal" 
+            android:onClick="onReturnClick"/>
 
         <TextView
             android:id="@+id/textView1"
@@ -26,7 +27,8 @@
             android:gravity="center"
             android:text="@string/dfFormat"
             android:textSize="30sp"
-            android:textStyle="bold" />
+            android:textStyle="bold" 
+            android:clickable="true"/>
 
         <Button
             android:id="@+id/btnSure"
@@ -34,14 +36,16 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="0.08"
-            android:background="@drawable/toolbar_fav_icon_res" />
+            android:background="@drawable/toolbar_fav_icon_res" 
+            android:onClick="onConfirmClick"/>
 
     </LinearLayout>
 
     <ListView
-        android:id="@+id/listView1"
+        android:id="@id/android:list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:entries="@array/format_string" >
     </ListView>
 
 </LinearLayout>

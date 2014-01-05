@@ -7,11 +7,12 @@
     <uses-sdk
         android:minSdkVersion="14"
         android:targetSdkVersion="18" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-	<uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
-	<uses-permission android:name="android.permission.WRITE_SETTINGS" />
-	
+
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -29,6 +30,14 @@
         <activity
             android:name="bjtu.group6.droidcorder.AudioListActivity"
             android:label="@string/title_activity_audio_list" >
+        </activity>
+        <activity
+            android:name="bjtu.group6.droidcorder.ConfigActivity"
+            android:label="@string/title_activity_config" >
+        </activity>
+        <activity
+            android:name="bjtu.group6.droidcorder.FormatDetailActivity"
+            android:label="@string/title_activity_format_detail" >
         </activity>
     </application>
 
