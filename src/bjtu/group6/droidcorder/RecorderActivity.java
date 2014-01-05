@@ -1,8 +1,6 @@
 package bjtu.group6.droidcorder;
 
 import java.io.File;
-import java.sql.Timestamp;
-import java.util.Date;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -14,26 +12,24 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
+import bjtu.group6.droidcorder.service.FileOperation;
 import bjtu.group6.droidcorder.service.RecorderTask;
 
 public class RecorderActivity extends Activity {
 	Button _buttonRecord;
-
 	Chronometer _chronometer;
-
-	String _path = "/Droidcorder";
 
 	File _currentFile = null;
 
 	Boolean _recordMode = false;
 	RecorderTask _recorderTask;
 	private MediaRecorder _recorder = null;
+	private FileOperation fileOperation =new FileOperation();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_recorder);
-
 		//	    final AlertDialog.Builder alert = new AlertDialog.Builder(this);
 		//	    alert.setTitle(R.string.filename);
 		//	    final EditText input = new EditText(this);
@@ -83,24 +79,11 @@ public class RecorderActivity extends Activity {
 		return false;
 	}
 
-	public File getStorageDir(String path) {
-		if (!Environment.getExternalStoragePublicDirectory(path).isDirectory()) {
-			Environment.getExternalStoragePublicDirectory(path).mkdir();
-			//Log.e(LOG_TAG, "Directory not created");
-		}
-		File file = new File(Environment.getExternalStoragePublicDirectory(path), generateFileName() + ".3gp");
-		return file;
-	}
-
-
-	private String generateFileName() {
-		return new Timestamp(new Date().getTime()).toString();
-	}
 
 	public void onRecordClick(View view) {
 		if (!_recordMode) {
 			_recorderTask = new RecorderTask();
-			_currentFile = getStorageDir(_path);
+			_currentFile = fileOperation.getStorageDir();
 			_buttonRecord.setText(R.string.recording);
 			_recorderTask.execute(_currentFile);
 			_chronometer.setBase(SystemClock.elapsedRealtime());

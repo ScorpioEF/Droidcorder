@@ -30,12 +30,10 @@ import bjtu.group6.droidcorder.service.FileOperation;
 
 public class AudioListActivity extends Activity {
 	private ListView audioList;
-	private MediaPlayer _player = null;
+	private MediaPlayer audioPlayer = null;
 
 	private final FileOperation fileOperation = new FileOperation();
 	private ArrayList<AudioFileInfo> audioFiles = new ArrayList<AudioFileInfo>();
-
-	private Boolean _playMode = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -43,21 +41,22 @@ public class AudioListActivity extends Activity {
 		setContentView(R.layout.activity_audio_list);
 		findViews();
 
+		audioFiles = fileOperation.getAudioFileList();
 		// For test
-		AudioFileInfo audioinfo = new AudioFileInfo();
-		audioinfo.setAudioId(111111);
-		audioinfo.setFileName("test1");
-		audioinfo.setDuration("10.50");
-		audioinfo.setCreateTime("2014.1.1");
-		audioinfo.setFilePath("/mnt/sdcard/test1.mp3");
-
-		AudioFileInfo audioinfo2 = new AudioFileInfo();
-		audioinfo2.setAudioId(111222);
-		audioinfo2.setFileName("Audio2");
-		audioinfo2.setDuration("21.50");
-		audioinfo2.setCreateTime("2014.1.2");
-		audioFiles.add(audioinfo);
-		audioFiles.add(audioinfo2);
+//		AudioFileInfo audioinfo = new AudioFileInfo();
+//		audioinfo.setAudioId(111111);
+//		audioinfo.setFileName("test1");
+//		audioinfo.setDuration("10.50");
+//		audioinfo.setCreateTime("2014.1.1");
+//		audioinfo.setFilePath("/mnt/sdcard/test1.mp3");
+//
+//		AudioFileInfo audioinfo2 = new AudioFileInfo();
+//		audioinfo2.setAudioId(111222);
+//		audioinfo2.setFileName("Audio2");
+//		audioinfo2.setDuration("21.50");
+//		audioinfo2.setCreateTime("2014.1.2");
+//		audioFiles.add(audioinfo);
+//		audioFiles.add(audioinfo2);
 
 		audioList.setAdapter(new AudioListAdapter(audioFiles,
 				AudioListActivity.this));
@@ -69,9 +68,9 @@ public class AudioListActivity extends Activity {
 	@Override
 	public void onPause() {
 		super.onPause();
-		if (_player != null) {
-			_player.release();
-			_player = null;
+		if (audioPlayer != null) {
+			audioPlayer.release();
+			audioPlayer = null;
 		}
 	}
 	private void setListeners() {
@@ -80,20 +79,15 @@ public class AudioListActivity extends Activity {
 					long arg3) {
 				AudioFileInfo audioInfo = (AudioFileInfo) audioList.getItemAtPosition(arg2);
 
-				if (_player != null && _player.isPlaying()) {
-					_player.stop();
-					
+				if (audioPlayer != null && audioPlayer.isPlaying()) {
+					audioPlayer.stop();
 				}
 				else {
-					_player = new MediaPlayer();
+					audioPlayer = new MediaPlayer();
 					try {
-						//TODO
-						//_player.setDataSource(audioInfo.getFilePath());
-						//test
-						_player.setDataSource("/storage/sdcard0/Droidcorder/2014-01-05 13:56:02.829.3gp");
-						_player.prepare();
-						_player.start();
-						_playMode = true;
+						audioPlayer.setDataSource(audioInfo.getFilePath());
+						audioPlayer.prepare();
+						audioPlayer.start();
 					} catch (IOException e) {
 						Log.e("youpi", "prepare() failed");
 					}
