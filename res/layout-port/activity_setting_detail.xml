@@ -2,19 +2,22 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/backgroud"
     android:orientation="vertical" >
 
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:background="#a9a9a9" >
 
         <Button
-            android:id="@+id/button1"
+            android:id="@+id/detailBtnReturn"
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/title_back_normal" />
+            android:layout_height="match_parent"
+            android:layout_weight="0.06"
+            android:background="@drawable/title_back_normal" 
+            android:onClick="onReturnClick"/>
 
         <TextView
             android:id="@+id/textView1"
@@ -23,22 +26,27 @@
             android:layout_gravity="center"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="@string/sounds"
-            android:textSize="25sp" />
+            android:text="@string/dfFormat"
+            android:textSize="30sp"
+            android:textStyle="bold" 
+            android:clickable="true"/>
 
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/btnSure"
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/toolbar_fav_icon_res" />
+            android:layout_height="match_parent"
+            android:layout_weight="0.08"
+            android:background="@drawable/toolbar_fav_icon_res" 
+            android:onClick="onConfirmClick"/>
 
     </LinearLayout>
 
     <ListView
-        android:id="@+id/listView1"
+        android:id="@id/android:list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:entries="@array/format_string" >
     </ListView>
 
 </LinearLayout>

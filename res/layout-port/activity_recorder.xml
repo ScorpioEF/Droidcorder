@@ -1,6 +1,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/backgroud"
     android:orientation="vertical" >
 
     <LinearLayout
@@ -37,7 +38,7 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="250dp"
+        android:layout_height="0dip"
         android:layout_marginTop="20dp"
         android:layout_weight="0.78" >
 
@@ -45,46 +46,71 @@
             android:id="@+id/imageView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:contentDescription="@string/desc"
             android:src="@drawable/tape_bottom" />
+
     </FrameLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="80dp"
         android:layout_marginTop="40dp"
         android:background="#808080"
+        android:baselineAligned="false"
         android:orientation="horizontal" >
 
-        <Button
-            android:id="@+id/record_btnSetting"
-            android:layout_width="60dp"
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
+            android:layout_gravity="center_horizontal|center_vertical"
             android:layout_weight="1"
-            android:background="@drawable/setting"
-            android:onClick="onSettingClick" />
+            android:gravity="center_horizontal" >
 
-        <Button
-            android:id="@+id/ButtonRecordStop"
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:background="@drawable/record"
-            android:onClick="onRecordClick" />
+            <Button
+                android:id="@+id/record_btnSetting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/setting"
+                android:onClick="onSettingClick" />
 
-        <Button
-            android:id="@+id/btnAudioList"
-            android:layout_width="60dp"
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
+            android:layout_gravity="center_horizontal|center_vertical"
             android:layout_weight="1"
-            android:background="@drawable/play_list" 
-            android:onClick="onListMediaClick" />
+            android:gravity="center_horizontal" >
+
+            <Button
+                android:id="@+id/ButtonRecordStop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/record"
+                android:onClick="onRecordClick" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:layout_weight="1"
+            android:gravity="center_horizontal" >
+
+            <Button
+                android:id="@+id/btnAudioList"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/play_list"
+                android:onClick="onListMediaClick" />
+
+        </LinearLayout>
+
     </LinearLayout>
 
 </LinearLayout>
