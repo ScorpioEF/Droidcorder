@@ -1,5 +1,8 @@
 <?xml version='1.0' encoding='utf-8' standalone='yes' ?>
 <map>
  	<string name="FORMAT_KEY">THREE_GPP</string>
+ 	<string name="ABOUT_KEY">Droidcorder 1.0.0</string>
  	<int name="INDEX_KEY" value="0"/>
+ 	<int name="DURATION_KEY" value="30"/>
+ 	<int name="DURATION_INDEX_KEY" value="0"/>
 </map>
