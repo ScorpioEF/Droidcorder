@@ -229,26 +229,37 @@ public class AudioListActivity extends Activity {
 	 * @author FengXiangmin
 	 * @param audioFileInfo
 	 */
-	private void delete(AudioFileInfo audioFileInfo)
+	private void delete(final AudioFileInfo audioFileInfo)
 	{
 		final String oldFileName = audioFileInfo.getFileName();
-		boolean deleteFlag = fileOperation.deleteFile(audioFileInfo.getFilePath());
-		if(deleteFlag){
-			Log.i("AudioListActivity", "delete file " + audioFileInfo.getFilePath() + " success!");
-			Toast.makeText(AudioListActivity.this, "Delete file " + oldFileName + " success!", Toast.LENGTH_SHORT).show();
-		}else{
-			Log.e("AudioListActivity", "delete file " + audioFileInfo.getFilePath() + " failed!");
-			Toast.makeText(AudioListActivity.this, "Delete file " + oldFileName + " failed!", Toast.LENGTH_SHORT).show();
-		}
-		
-		//refresh the listview
-		audioFiles.clear();
-		audioFiles = fileOperation.getAudioFileList();
-		
-		audioList.setAdapter(new AudioListAdapter(audioFiles,
-				AudioListActivity.this));
-		BaseAdapter sAdapter = (BaseAdapter)audioList.getAdapter();
-        sAdapter.notifyDataSetChanged();
+		new AlertDialog.Builder(this)
+		.setTitle("Delete Confirm")
+		.setIcon(android.R.drawable.ic_dialog_info)
+		.setMessage("Delete file " + oldFileName + "?")
+		.setPositiveButton("Yes", new OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// delete the file
+				boolean deleteFlag = fileOperation.deleteFile(audioFileInfo.getFilePath());
+				if(deleteFlag){
+					Log.i("AudioListActivity", "delete file " + audioFileInfo.getFilePath() + " success!");
+					Toast.makeText(AudioListActivity.this, "Delete file " + oldFileName + " success!", Toast.LENGTH_SHORT).show();
+				}else{
+					Log.e("AudioListActivity", "delete file " + audioFileInfo.getFilePath() + " failed!");
+					Toast.makeText(AudioListActivity.this, "Delete file " + oldFileName + " failed!", Toast.LENGTH_SHORT).show();
+				}
+				//refresh the listview
+				audioFiles.clear();
+				audioFiles = fileOperation.getAudioFileList();
+				
+				audioList.setAdapter(new AudioListAdapter(audioFiles,
+						AudioListActivity.this));
+				BaseAdapter sAdapter = (BaseAdapter)audioList.getAdapter();
+		        sAdapter.notifyDataSetChanged();
+			}
+		})
+		.setNegativeButton("Cancel", null)
+		.show();
 	}
 
 	/**
