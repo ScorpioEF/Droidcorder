@@ -15,6 +15,10 @@ public class RecorderTask extends AsyncTask<File, Void, Void>{
 		return null;
 	}
 	
+    protected void onCancelled() {
+    	stopRecording();
+	}
+    
     private void startRecording(File file) {
     	_recorder = new MediaRecorder();
     	_recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
@@ -27,11 +31,24 @@ public class RecorderTask extends AsyncTask<File, Void, Void>{
         } catch (IOException e) {
             //Log.e(LOG_TAG, "prepare() failed");
         }
-
         _recorder.start();
+        
+        try {
+        	while (true)
+        	{
+        		Thread.sleep(100, 0);
+        		if (isCancelled())
+        			break;
+        	}
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
     
-    protected void onCancelled() {
-
+	private void stopRecording() {
+		_recorder.stop();
+		_recorder.release();
+		_recorder = null;
 	}
 }
