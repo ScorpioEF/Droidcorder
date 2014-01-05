@@ -5,7 +5,7 @@ public class AudioFileInfo {
 	private long audioId;
 	private String fileName;
 	private String createTime;
-	private double fileSize;
+	private String fileSize;
 	private String filePath;
 	private String duration;
 
@@ -27,10 +27,10 @@ public class AudioFileInfo {
 	public void setCreateTime(String createTime) {
 		this.createTime = createTime;
 	}
-	public double getFileSize() {
+	public String getFileSize() {
 		return fileSize;
 	}
-	public void setFileSize(double fileSize) {
+	public void setFileSize(String fileSize) {
 		this.fileSize = fileSize;
 	}
 	public String getFilePath() {

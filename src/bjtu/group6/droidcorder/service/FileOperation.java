@@ -1,16 +1,21 @@
 package bjtu.group6.droidcorder.service;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.text.DecimalFormat;
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 import bjtu.group6.droidcorder.model.AudioFileInfo;
 
+import android.R.integer;
 import android.content.ContentValues;
 import android.content.Context;
+import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Environment;
@@ -24,11 +29,11 @@ import android.util.Log;
  */
 public class FileOperation {
 
-	private String _path = "/Droidcorder";
+	private String path = "/Droidcorder";
 	private ArrayList<AudioFileInfo> audioFiles = new ArrayList<AudioFileInfo>();
 
 	public ArrayList<AudioFileInfo> getAudioFileList() {
-		File dir = Environment.getExternalStoragePublicDirectory(_path);
+		File dir = Environment.getExternalStoragePublicDirectory(path);
 		if (dir.isDirectory()) {
 			Log.e("FIle dir path:",dir.getPath());
 			Log.e("FIle dir absolute path:",dir.getAbsolutePath());
@@ -40,11 +45,28 @@ public class FileOperation {
 					AudioFileInfo audioFileInfo = new AudioFileInfo();
 					audioFileInfo.setFileName(readfile.getName());
 					audioFileInfo.setFilePath(readfile.getPath());
+					audioFileInfo.setFileSize(formatFileSize(readfile.length()));
+					Long time =readfile.lastModified();
+					Calendar cd = Calendar.getInstance();
+					cd.setTimeInMillis(time);
+					audioFileInfo.setCreateTime(new SimpleDateFormat("yyyy-MM-dd").format(cd.getTime()));
+					MediaPlayer audioPlayer = new MediaPlayer();
+					try {
+						audioPlayer.setDataSource(readfile.getPath());
+						audioPlayer.prepare();
+					} catch (IOException e) {
+						Log.e("Get Media", "e");
+					}
+					int duration = audioPlayer.getDuration()/1000;
+					int minute = duration/60;
+					int second = duration - minute*60;
+					DecimalFormat df = new DecimalFormat("00");
+					audioPlayer = null;
+					audioFileInfo.setDuration(String.valueOf(df.format(minute)) + ":" + String.valueOf(df.format(second)));
 					Log.e("audio file path=",readfile.getPath());
 					Log.e("absolutepath=", readfile.getAbsolutePath());
 					Log.e("name=", readfile.getName());
 					audioFiles.add(audioFileInfo);
-
 				}
 			}
 
@@ -53,19 +75,41 @@ public class FileOperation {
 	}
 
 	public File getStorageDir() {
-		if (!Environment.getExternalStoragePublicDirectory(_path).isDirectory()) {
-			Environment.getExternalStoragePublicDirectory(_path).mkdir();
+		if (!Environment.getExternalStoragePublicDirectory(path).isDirectory()) {
+			Environment.getExternalStoragePublicDirectory(path).mkdir();
 			//Log.e(LOG_TAG, "Directory not created");
 		}
-		File file = new File(Environment.getExternalStoragePublicDirectory(_path), generateFileName() + ".3gp");
+		File file = new File(Environment.getExternalStoragePublicDirectory(path), generateFileName() + ".3gp");
 		return file;
 	}
 
 
 	private String generateFileName() {
-		return new Timestamp(new Date().getTime()).toString();
+		return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date().getTime());
 	}
 
+	public String formatFileSize(long fileLength)
+	{
+		DecimalFormat df = new DecimalFormat("#.00");
+		String fileSizeString = "";
+		if (fileLength < 1024)
+		{
+			fileSizeString = df.format((double) fileLength) + "B";
+		}
+		else if (fileLength < 1048576)
+		{
+			fileSizeString = df.format((double) fileLength / 1024) + "K";
+		}
+		else if (fileLength < 1073741824)
+		{
+			fileSizeString = df.format((double) fileLength / 1048576) + "M";
+		}
+		else
+		{
+			fileSizeString = df.format((double) fileLength / 1073741824) + "G";
+		}
+		return fileSizeString;
+	}
 	/**
 	 * delete a file
 	 * @param   sPath    filepath
