@@ -8,7 +8,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
-import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -38,6 +37,7 @@ public class AudioListActivity extends Activity {
 	private SeekBar playSeekBar;
 	private TextView currentTime;
 	private TextView totalTime;
+	private TextView playAudioName;
 	private MediaPlayer audioPlayer = null;
 
 	private final FileOperation fileOperation = new FileOperation();
@@ -52,7 +52,6 @@ public class AudioListActivity extends Activity {
 		findViews();
 
 		audioFiles = fileOperation.getAudioFileList();
-
 		audioList.setAdapter(new AudioListAdapter(audioFiles,
 				AudioListActivity.this));
 
@@ -69,7 +68,7 @@ public class AudioListActivity extends Activity {
 	private void audioStop() {
 		if (lastIndex != -1)
 		{
-			audioList.getChildAt(lastIndex).setBackgroundColor(Color.TRANSPARENT);
+			playAudioName.setText("");
 			lastIndex = -1;
 		}
 
@@ -101,15 +100,13 @@ public class AudioListActivity extends Activity {
 				if (arg2 == lastIndex && audioPlayer != null
 						&& audioPlayer.isPlaying()) {
 					audioPlayer.pause();
+					playAudioName.setText(audioInfo.getFileName() + " pause");
 				} else if (arg2 == lastIndex && audioPlayer != null) {
 					audioPlayer.start();
+					playAudioName.setText(audioInfo.getFileName() + " is playing");
 				} else {
 					if (lastIndex != -1 && arg2 != lastIndex) {
 						audioStop();
-						// audioPlayer.stop();
-						//audioList.getChildAt(lastIndex).setBackgroundColor(
-						//		Color.TRANSPARENT);
-						// handler.removeCallbacks(updateThread);
 					}
 					audioPlayer = new MediaPlayer();
 					audioPlayer.setOnCompletionListener(onCompletion);
@@ -121,8 +118,7 @@ public class AudioListActivity extends Activity {
 						totalTime.setText(String.valueOf(fileOperation
 								.formatTime(audioPlayer.getDuration())));
 						handler.post(updateThread);
-						audioList.getChildAt(arg2).setBackgroundColor(
-								Color.LTGRAY);
+						playAudioName.setText(audioInfo.getFileName() + " is playing");
 					} catch (IOException e) {
 						Log.e("Group6", "start player error");
 					}
@@ -185,6 +181,7 @@ public class AudioListActivity extends Activity {
 		playSeekBar = (SeekBar) findViewById(R.id.audioList_play_seekBar);
 		currentTime = (TextView) this.findViewById(R.id.audioList_currentTime);
 		totalTime = (TextView) this.findViewById(R.id.audioList_totalTime);
+		playAudioName = (TextView) this.findViewById(R.id.playFileName);
 		playSeekBar.setProgress(0);
 	}
 
