@@ -19,13 +19,17 @@ public class RecorderTask extends AsyncTask<File, Void, Void>{
     	stopRecording();
 	}
     
+    protected void onPostExecute() {
+    	stopRecording();
+    }
+    
     private void startRecording(File file) {
     	_recorder = new MediaRecorder();
     	_recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
     	_recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
     	_recorder.setOutputFile(file.getAbsolutePath());
     	_recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-
+    	
         try {
         	_recorder.prepare();
         } catch (IOException e) {
