@@ -82,7 +82,7 @@ public class FileOperation {
 
 
 	private String generateFileName() {
-		return new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss").format(new Date().getTime());
+		return new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date().getTime());
 	}
 
 	private String getAudioFormat(Activity activity) {
