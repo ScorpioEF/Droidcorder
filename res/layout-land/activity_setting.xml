@@ -52,7 +52,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="20"
             android:clickable="true"
-            android:onClick="onFormatSettingClick"
+            android:onClick="onFormatDetialClick"
             android:paddingLeft="20dp"
             android:text="@string/dfFormat"
             android:textSize="20sp" />
@@ -64,7 +64,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0"
             android:background="@drawable/right_arrow_nor"
-            android:onClick="onFormatSettingClick" />
+            android:onClick="onFormatDetialClick" />
 
     </LinearLayout>
 
