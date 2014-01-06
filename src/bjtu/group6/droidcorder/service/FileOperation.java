@@ -9,8 +9,10 @@ import java.util.Calendar;
 import java.util.Date;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -70,17 +72,24 @@ public class FileOperation {
 		return String.valueOf(df.format(minute)) + ":" + String.valueOf(df.format(second));
 	}
 
-	public File getStorageDir() {
+	public File getStorageDir(Activity activity) {
 		if (!Environment.getExternalStoragePublicDirectory(path).isDirectory()) {
 			Environment.getExternalStoragePublicDirectory(path).mkdir();
 		}
-		File file = new File(Environment.getExternalStoragePublicDirectory(path), generateFileName() + ".3gp");
+		File file = new File(Environment.getExternalStoragePublicDirectory(path), generateFileName() + getAudioFormat(activity)); //".3gp"
 		return file;
 	}
 
 
 	private String generateFileName() {
-		return new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date().getTime());
+		return new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss").format(new Date().getTime());
+	}
+
+	private String getAudioFormat(Activity activity) {
+		String defaultFormat = ".3gp";
+		SharedPreferences setting_preference = activity.getSharedPreferences("setting_preference", Context.MODE_PRIVATE);
+		return setting_preference.getString("POSTFIX_KEY", defaultFormat);
+
 	}
 
 	public String formatFileSize(long fileLength)
@@ -105,6 +114,7 @@ public class FileOperation {
 		}
 		return fileSizeString;
 	}
+
 	/**
 	 * delete a file
 	 * @param   sPath    filepath

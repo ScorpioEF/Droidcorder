@@ -78,7 +78,7 @@ public class RecorderActivity extends Activity {
 	public void onRecordClick(View view) {
 		if (!_recordMode) {
 			_recorderTask = new RecorderTask();
-			_currentFile = fileOperation.getStorageDir();
+			_currentFile = fileOperation.getStorageDir(this);
 			_buttonRecord.setBackgroundResource(drawable.stop_record);
 			_recorderTask.execute(_currentFile);
 			_chronometer.setBase(SystemClock.elapsedRealtime());
