@@ -3,10 +3,13 @@ package bjtu.group6.droidcorder;
 import java.io.File;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.view.Menu;
 import android.view.View;
@@ -17,39 +20,37 @@ import bjtu.group6.droidcorder.service.FileOperation;
 import bjtu.group6.droidcorder.service.RecorderTask;
 
 public class RecorderActivity extends Activity {
-	Button _buttonRecord;
-	Chronometer _chronometer;
+	private Button _buttonRecord;
+	private Chronometer _chronometer;
 
-	File _currentFile = null;
+	private File _currentFile = null;
 
-	Boolean _recordMode = false;
-	RecorderTask _recorderTask;
+	private Boolean _recordMode = false;
+	private RecorderTask _recorderTask;
 	private MediaRecorder _recorder = null;
-	private FileOperation fileOperation =new FileOperation();
+	private FileOperation fileOperation = new FileOperation();
 
+	private SharedPreferences settingPreference;
+	private Handler handler;
+
+	private Runnable recordLimit = new Runnable() {
+		@Override
+		public void run() {
+			stopRecord();
+			
+		}
+	};
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_recorder);
-		//	    final AlertDialog.Builder alert = new AlertDialog.Builder(this);
-		//	    alert.setTitle(R.string.filename);
-		//	    final EditText input = new EditText(this);
-		//	    alert.setView(input);
-		//	    alert.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-		//	        public void onClick(DialogInterface dialog, int whichButton) {
-		//	            String value = input.getText().toString().trim();
-		//	        }
-		//	    });
-		//	    alert.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-		//	        public void onClick(DialogInterface dialog, int whichButton) {
-		//	            dialog.cancel();
-		//	        }
-		//	    });
-		//	    alert.show();
 		if (!isExternalStorageWritable())
 			this.finish();
 		_buttonRecord = (Button) findViewById(R.id.ButtonRecordStop);
 		_chronometer = (Chronometer) findViewById(R.id.Chronometer);
+		settingPreference = this.getSharedPreferences("setting_preference",
+				Context.MODE_PRIVATE);
 	}
 
 	@Override
@@ -77,28 +78,39 @@ public class RecorderActivity extends Activity {
 
 	public void onRecordClick(View view) {
 		if (!_recordMode) {
-			_recorderTask = new RecorderTask();
-			_currentFile = fileOperation.getStorageDir(this);
-			_buttonRecord.setBackgroundResource(drawable.stop_record);
-			_recorderTask.execute(_currentFile);
-			_chronometer.setBase(SystemClock.elapsedRealtime());
-			_chronometer.start();
+			startRecord();
 		} else {
-			_buttonRecord.setBackgroundResource(drawable.record);
-			_recorderTask.cancel(true);
-			_chronometer.stop();
-			_recorderTask = null;
+			stopRecord();
 		}
 		_recordMode = !_recordMode;
 	}
+	
+	private void startRecord() {
+		_recorderTask = new RecorderTask();
+		_currentFile = fileOperation.getStorageDir(this);
+		_buttonRecord.setBackgroundResource(drawable.stop_record);
+		_recorderTask.execute(_currentFile);
+		_chronometer.setBase(SystemClock.elapsedRealtime());
+		_chronometer.start();
 
-	public void onListMediaClick(View view)
-	{
+		handler = new Handler();
+		handler.postDelayed(recordLimit, settingPreference.getInt("DURATION_KEY", 30) * 1000);
+	}
+
+	private void stopRecord() {
+		handler.removeCallbacks(recordLimit);
+		_buttonRecord.setBackgroundResource(drawable.record);
+		_recorderTask.cancel(true);
+		_chronometer.stop();
+		_recorderTask = null;
+	}
+
+	public void onListMediaClick(View view) {
 		Intent i = new Intent(this, AudioListActivity.class);
 		startActivity(i);
 	}
 
-	public void onSettingClick(View view){
+	public void onSettingClick(View view) {
 		Intent i = new Intent(this, ConfigActivity.class);
 		startActivity(i);
 	}
