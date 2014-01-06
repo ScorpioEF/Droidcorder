@@ -5,10 +5,13 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -39,6 +42,7 @@ public class AudioListActivity extends Activity {
 	private TextView totalTime;
 	private TextView playAudioName;
 	private MediaPlayer audioPlayer = null;
+	private AudioManager audioManager;
 
 	private final FileOperation fileOperation = new FileOperation();
 	private ArrayList<AudioFileInfo> audioFiles = new ArrayList<AudioFileInfo>();
@@ -56,7 +60,7 @@ public class AudioListActivity extends Activity {
 				AudioListActivity.this));
 
 		setListeners();
-
+		audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
 	}
 
 	@Override
@@ -71,13 +75,13 @@ public class AudioListActivity extends Activity {
 			playAudioName.setText("");
 			lastIndex = -1;
 		}
-
 		if (audioPlayer != null) {
 			audioPlayer.stop();
 			audioPlayer.release();
 			audioPlayer = null;
 			handler.removeCallbacks(updateThread);
 		}
+        audioManager.abandonAudioFocus(afChangeListener);
 	}
 
 	Handler handler = new Handler();
@@ -95,6 +99,8 @@ public class AudioListActivity extends Activity {
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
+				if (!requestAudioFocus())
+					return;
 				AudioFileInfo audioInfo = (AudioFileInfo) audioList
 						.getItemAtPosition(arg2);
 				if (arg2 == lastIndex && audioPlayer != null
@@ -421,5 +427,25 @@ public class AudioListActivity extends Activity {
 		public void onCompletion(MediaPlayer mp) {
 			audioStop();
 		}
+	};
+	
+	public Boolean requestAudioFocus()
+	{
+		int result = audioManager.requestAudioFocus(afChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+		if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED)
+			return true;
+		return false;
+	}
+
+	OnAudioFocusChangeListener afChangeListener = new OnAudioFocusChangeListener() {
+	    public void onAudioFocusChange(int focusChange) {
+	        if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
+	            audioPlayer.pause();
+	        } else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
+	        	audioPlayer.start();
+	        } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
+	            audioPlayer.pause();
+	        }
+	    }
 	};
 }
