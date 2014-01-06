@@ -12,6 +12,7 @@ import android.widget.ListView;
 public class FormatDetailActivity extends ListActivity {
 
 	private String[] formatInfo = new String[] { "AAC_ADTS", "AMR_NB", "MPEG_4", "THREE_GPP"}; 
+	private String[] formatInfoValue = new String[] { ".acc", ".amr", ".mp4", ".3gp"};
 	private int defaultIndex = 0;
 	private int selectedFormatIndex;
 
@@ -55,13 +56,13 @@ public class FormatDetailActivity extends ListActivity {
 	}
 
 	private void saveSetting() {
-		Context ctx = FormatDetailActivity.this; 
+    	Context ctx = FormatDetailActivity.this; 
 		SharedPreferences setting_preference = ctx.getSharedPreferences("setting_preference", MODE_PRIVATE);
-
+		
 		Editor editor = setting_preference.edit();
 		editor.putInt("INDEX_KEY", selectedFormatIndex);
 		editor.putString("FORMAT_KEY", formatInfo[selectedFormatIndex]);
-		editor.commit();
-
+		editor.putString("POSTFIX_KEY", formatInfoValue[selectedFormatIndex]);
+		editor.commit();		
 	}
 }
