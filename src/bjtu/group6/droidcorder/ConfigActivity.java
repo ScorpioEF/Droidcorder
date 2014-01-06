@@ -15,18 +15,44 @@ import android.view.View;
 
 public class ConfigActivity extends Activity {	
 	private int max = 2147483647;
-	private String[]arrayDuration = {"30 mins", "1h", "4 hs", "no limit"};
+	private String[]arrayDuration = {"30 mins", "1 hour", "4 hours", "no limit"};
 	private int []durationInfo = { 30, 60, 240, max};
 	private int selectedDurationIndex;
 	private int defaultIndex = 0;
 	private String _path = "/Droidcorder";
 	private String strAbout = "";
+	
+	private String[] formatInfo = new String[] { "AAC_ADTS", "AMR_NB", "MPEG_4", "THREE_GPP"}; 
+	private String[] formatInfoValue = new String[] { ".acc", ".amr", ".mp4", ".3gp"};
+	private int selectedFormatIndex;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);	
 		updateAllSetting();
 		setContentView(R.layout.activity_setting);
 	}
+	
+	public void onFormatDetialClick(View view){   	 
+		Dialog formatDetailDialog = new AlertDialog.Builder(this).   
+				setTitle("Default Sound Format")   
+				.setIcon(R.drawable.ic_launcher)   
+				.setSingleChoiceItems(R.array.format_string, selectedFormatIndex ,new DialogInterface.OnClickListener() {  
+					@Override   
+					public void onClick(DialogInterface dialog, int which) {     
+						selectedFormatIndex = which;
+						saveFormatSetting();
+					}   
+				}). 
+				setPositiveButton("OK", new DialogInterface.OnClickListener() {              	   
+					@Override   
+					public void onClick(DialogInterface dialog, int which) {   
+						saveFormatSetting();
+					}   
+				}).                                    
+				create();   
+		formatDetailDialog.show();   
+	} 
 
 	public void onMaxDurationClick(View view){   	 
 		Dialog durationSettingDialog = new AlertDialog.Builder(this).   
@@ -65,12 +91,6 @@ public class ConfigActivity extends Activity {
 		durationSettingDialog.show();   
 	} 
 
-	public void onFormatSettingClick(View view){
-		Intent intent = new Intent();
-		intent.setClass(ConfigActivity.this, FormatDetailActivity.class);
-		startActivity(intent);
-		ConfigActivity.this.finish();
-	}
 	public void onAboutUsClick(View view){ 
 		Dialog aboutUsDialog = new AlertDialog.Builder(this).   
 				setTitle("Default Path")   
@@ -91,6 +111,7 @@ public class ConfigActivity extends Activity {
 		Context ctx = ConfigActivity.this; 
 		SharedPreferences setting_preference = ctx.getSharedPreferences("setting_preference", MODE_PRIVATE);
 		selectedDurationIndex = setting_preference.getInt("DURATION_INDEX_KEY", defaultIndex);
+		selectedFormatIndex = setting_preference.getInt("INDEX_KEY", defaultIndex);
 		strAbout = setting_preference.getString("ABOUT_KEY", "Droidcorder 1.0.0");
 	}
 
@@ -102,6 +123,17 @@ public class ConfigActivity extends Activity {
 		editor.putInt("DURATION_INDEX_KEY", selectedDurationIndex);
 		editor.putInt("DURATION_KEY", durationInfo[selectedDurationIndex]);
 		editor.commit();
+	}
+	
+	private void saveFormatSetting() {
+    	Context ctx = ConfigActivity.this; 
+		SharedPreferences setting_preference = ctx.getSharedPreferences("setting_preference", MODE_PRIVATE);
+		
+		Editor editor = setting_preference.edit();
+		editor.putInt("INDEX_KEY", selectedFormatIndex);
+		editor.putString("FORMAT_KEY", formatInfo[selectedFormatIndex]);
+		editor.putString("POSTFIX_KEY", formatInfoValue[selectedFormatIndex]);
+		editor.commit();		
 	}
 
 }
