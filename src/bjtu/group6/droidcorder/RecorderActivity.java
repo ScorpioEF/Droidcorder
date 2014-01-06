@@ -46,6 +46,10 @@ public class RecorderActivity extends Activity {
 		//	        }
 		//	    });
 		//	    alert.show();
+		if (!isExternalStorageWritable())
+			this.finish();
+		_buttonRecord = (Button) findViewById(R.id.ButtonRecordStop);
+		_chronometer = (Chronometer) findViewById(R.id.Chronometer);
 	}
 
 	@Override
@@ -56,17 +60,8 @@ public class RecorderActivity extends Activity {
 	}
 
 	@Override
-	protected void onResume() {
-		super.onResume();
-		if (!isExternalStorageWritable())
-			this.finish();
-		_buttonRecord = (Button) findViewById(R.id.ButtonRecordStop);
-		_chronometer = (Chronometer) findViewById(R.id.Chronometer);
-	}
-
-	@Override
-	public void onPause() {
-		super.onPause();
+	public void onDestroy() {
+		super.onDestroy();
 		if (_recorder != null) {
 			_recorder.release();
 			_recorder = null;
@@ -79,7 +74,6 @@ public class RecorderActivity extends Activity {
 			return true;
 		return false;
 	}
-
 
 	public void onRecordClick(View view) {
 		if (!_recordMode) {
@@ -105,10 +99,8 @@ public class RecorderActivity extends Activity {
 	}
 	
 	public void onSettingClick(View view){
-		Intent intent = new Intent();
-    	intent.setClass(RecorderActivity.this, ConfigActivity.class);
-    	startActivity(intent);
-    	RecorderActivity.this.finish();
+		Intent i = new Intent(this, ConfigActivity.class);
+		startActivity(i);
 	}
 	
 }

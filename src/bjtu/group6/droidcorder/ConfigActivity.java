@@ -84,10 +84,7 @@ public class ConfigActivity extends Activity {
 		aboutUsDialog.show();   
     }
     public void onReturnRecorderClick(View view){
-    	Intent intent = new Intent();
-    	intent.setClass(ConfigActivity.this, RecorderActivity.class);
-    	startActivity(intent);
-    	ConfigActivity.this.finish();
+    	this.finish();
     }
     
     private void updateAllSetting() {
