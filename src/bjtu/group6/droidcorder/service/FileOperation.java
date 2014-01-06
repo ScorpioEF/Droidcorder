@@ -7,8 +7,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.media.MediaPlayer;
@@ -24,6 +24,7 @@ import bjtu.group6.droidcorder.model.AudioFileInfo;
  * @author Feng Xiangmin
  *
  */
+@SuppressLint("SimpleDateFormat")
 public class FileOperation {
 
 	private String path = "/Droidcorder";
@@ -54,9 +55,6 @@ public class FileOperation {
 					}
 					audioFileInfo.setDuration(formatTime(audioPlayer.getDuration()));
 					audioPlayer.release();
-					Log.e("audio file path=",readfile.getPath());
-					Log.e("absolutepath=", readfile.getAbsolutePath());
-					Log.e("name=", readfile.getName());
 					audioFiles.add(audioFileInfo);
 				}
 			}
