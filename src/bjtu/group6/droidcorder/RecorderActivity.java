@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Environment;
@@ -37,10 +38,10 @@ public class RecorderActivity extends Activity {
 		@Override
 		public void run() {
 			stopRecord();
-			
+
 		}
 	};
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -69,6 +70,11 @@ public class RecorderActivity extends Activity {
 		}
 	}
 
+	@Override
+	public void onConfigurationChanged(Configuration config) {
+		super.onConfigurationChanged(config);
+	}
+
 	public boolean isExternalStorageWritable() {
 		String state = Environment.getExternalStorageState();
 		if (Environment.MEDIA_MOUNTED.equals(state))
@@ -84,7 +90,7 @@ public class RecorderActivity extends Activity {
 		}
 		_recordMode = !_recordMode;
 	}
-	
+
 	private void startRecord() {
 		_recorderTask = new RecorderTask();
 		_currentFile = fileOperation.getStorageDir(this);

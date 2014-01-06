@@ -4,9 +4,7 @@
     <string name="app_name">Droidcorder</string>
     <string name="action_settings">Settings</string>
     <string name="desc">image of recorder</string>
-    <string name="record">Record</string>
     <string name="soundRecorder">Sound Recorder</string>
-    <string name="recording">Recording</string>
 	<string name="setting">Setting</string>
 	<string name="dfFormat">Default Format</string>
 	<string name="dfPath">Default Path</string>
