@@ -14,8 +14,8 @@ public class FormatDetailActivity extends ListActivity {
 	private String[] formatInfo = new String[] { "AAC_ADTS", "AMR_NB", "MPEG_4", "THREE_GPP"}; 
 	private int defaultIndex = 0;
 	private int selectedFormatIndex;
-	
-	
+
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -25,7 +25,7 @@ public class FormatDetailActivity extends ListActivity {
 		listView.setItemsCanFocus(false);
 		listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 	}
-	
+
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		selectedFormatIndex = position;
@@ -35,33 +35,33 @@ public class FormatDetailActivity extends ListActivity {
 
 	public void onReturnClick(View view){
 		Intent intent = new Intent();
-    	intent.setClass(FormatDetailActivity.this, ConfigActivity.class);
-    	startActivity(intent);
-    	FormatDetailActivity.this.finish();
+		intent.setClass(FormatDetailActivity.this, ConfigActivity.class);
+		startActivity(intent);
+		FormatDetailActivity.this.finish();
 	}
-	
+
 	public void onConfirmClick(View view){
 		saveSetting();
 		Intent intent = new Intent();
 		intent.setClass(FormatDetailActivity.this, ConfigActivity.class);
-    	startActivity(intent);
-    	FormatDetailActivity.this.finish();
+		startActivity(intent);
+		FormatDetailActivity.this.finish();
 	}
-	
+
 	private void updateSetting() {
-    	Context ctx = FormatDetailActivity.this; 
+		Context ctx = FormatDetailActivity.this; 
 		SharedPreferences setting_preference = ctx.getSharedPreferences("setting_preference", MODE_PRIVATE);
 		selectedFormatIndex = setting_preference.getInt("INDEX_KEY", defaultIndex);
 	}
-    
-    private void saveSetting() {
-    	Context ctx = FormatDetailActivity.this; 
+
+	private void saveSetting() {
+		Context ctx = FormatDetailActivity.this; 
 		SharedPreferences setting_preference = ctx.getSharedPreferences("setting_preference", MODE_PRIVATE);
-		
+
 		Editor editor = setting_preference.edit();
 		editor.putInt("INDEX_KEY", selectedFormatIndex);
 		editor.putString("FORMAT_KEY", formatInfo[selectedFormatIndex]);
 		editor.commit();
-		
+
 	}
 }

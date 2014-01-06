@@ -97,10 +97,10 @@ public class RecorderActivity extends Activity {
 		Intent i = new Intent(this, AudioListActivity.class);
 		startActivity(i);
 	}
-	
+
 	public void onSettingClick(View view){
 		Intent i = new Intent(this, ConfigActivity.class);
 		startActivity(i);
 	}
-	
+
 }

@@ -25,83 +25,83 @@ public class ConfigActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);	
 		updateAllSetting();
-        setContentView(R.layout.activity_setting);
+		setContentView(R.layout.activity_setting);
 	}
-	
+
 	public void onMaxDurationClick(View view){   	 
-        Dialog durationSettingDialog = new AlertDialog.Builder(this).   
-                setTitle("Set Max Duration")   
-                .setIcon(R.drawable.ic_launcher)   
-                .setSingleChoiceItems(arrayDuration, selectedDurationIndex ,new DialogInterface.OnClickListener() {  
-                    @Override   
-                    public void onClick(DialogInterface dialog, int which) {     
-                        selectedDurationIndex = which;
-                        saveDurationSetting();
-                    }   
-                }). 
-                setPositiveButton("OK", new DialogInterface.OnClickListener() {              	   
-                    @Override   
-                    public void onClick(DialogInterface dialog, int which) {   
-                    	saveDurationSetting();
-                    }   
-                }).                                    
-                create();   
-        durationSettingDialog.show();   
-    } 
-	
+		Dialog durationSettingDialog = new AlertDialog.Builder(this).   
+				setTitle("Set Max Duration")   
+				.setIcon(R.drawable.ic_launcher)   
+				.setSingleChoiceItems(arrayDuration, selectedDurationIndex ,new DialogInterface.OnClickListener() {  
+					@Override   
+					public void onClick(DialogInterface dialog, int which) {     
+						selectedDurationIndex = which;
+						saveDurationSetting();
+					}   
+				}). 
+				setPositiveButton("OK", new DialogInterface.OnClickListener() {              	   
+					@Override   
+					public void onClick(DialogInterface dialog, int which) {   
+						saveDurationSetting();
+					}   
+				}).                                    
+				create();   
+		durationSettingDialog.show();   
+	} 
+
 	public void onDefaultPathClick(View view){ 
-		
+
 		String path = Environment.getExternalStoragePublicDirectory(_path).getPath();
-		
-        Dialog durationSettingDialog = new AlertDialog.Builder(this).   
-                setTitle("Default Path")   
-                .setIcon(R.drawable.ic_launcher)   
-                .setMessage(path)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+
+		Dialog durationSettingDialog = new AlertDialog.Builder(this).   
+				setTitle("Default Path")   
+				.setIcon(R.drawable.ic_launcher)   
+				.setMessage(path)
+				.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {	
 					}}).                                    
-                create();   
-        durationSettingDialog.show();   
-    } 
-	
-    public void onFormatSettingClick(View view){
-    	Intent intent = new Intent();
-    	intent.setClass(ConfigActivity.this, FormatDetailActivity.class);
-    	startActivity(intent);
-    	ConfigActivity.this.finish();
-    }
-    public void onAboutUsClick(View view){ 
+					create();   
+		durationSettingDialog.show();   
+	} 
+
+	public void onFormatSettingClick(View view){
+		Intent intent = new Intent();
+		intent.setClass(ConfigActivity.this, FormatDetailActivity.class);
+		startActivity(intent);
+		ConfigActivity.this.finish();
+	}
+	public void onAboutUsClick(View view){ 
 		Dialog aboutUsDialog = new AlertDialog.Builder(this).   
-                setTitle("Default Path")   
-                .setIcon(R.drawable.ic_launcher)   
-                .setMessage(strAbout)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+				setTitle("Default Path")   
+				.setIcon(R.drawable.ic_launcher)   
+				.setMessage(strAbout)
+				.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {	
 					}}).                                    
-                create();   
+					create();   
 		aboutUsDialog.show();   
-    }
-    public void onReturnRecorderClick(View view){
-    	this.finish();
-    }
-    
-    private void updateAllSetting() {
-    	Context ctx = ConfigActivity.this; 
+	}
+	public void onReturnRecorderClick(View view){
+		this.finish();
+	}
+
+	private void updateAllSetting() {
+		Context ctx = ConfigActivity.this; 
 		SharedPreferences setting_preference = ctx.getSharedPreferences("setting_preference", MODE_PRIVATE);
 		selectedDurationIndex = setting_preference.getInt("DURATION_INDEX_KEY", defaultIndex);
 		strAbout = setting_preference.getString("ABOUT_KEY", "Droidcorder 1.0.0");
 	}
-    
-    private void saveDurationSetting() {
-    	Context ctx = ConfigActivity.this; 
+
+	private void saveDurationSetting() {
+		Context ctx = ConfigActivity.this; 
 		SharedPreferences setting_preference = ctx.getSharedPreferences("setting_preference", MODE_PRIVATE);
-		
+
 		Editor editor = setting_preference.edit();
 		editor.putInt("DURATION_INDEX_KEY", selectedDurationIndex);
 		editor.putInt("DURATION_KEY", durationInfo[selectedDurationIndex]);
 		editor.commit();
 	}
-      
+
 }
